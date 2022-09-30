@@ -29,7 +29,12 @@ import java.nio.file.StandardOpenOption
 import kotlin.coroutines.CoroutineContext
 
 object MiraiBOTGroupMessage {
-    suspend fun load(coroutineContext: CoroutineContext, event: GroupMessageEvent, dailys: HashMap<Long, String>, dailylist: List<String>) {
+    suspend fun load(
+        coroutineContext: CoroutineContext,
+        event: GroupMessageEvent,
+        dailys: HashMap<Long, String>,
+        dailylist: List<String>
+    ) {
         if (RainData.IsRun != 1L) return
         if (Bot.instances[0].id != RainData.BOTQQ) return
         val messageChain: MessageChain = event.message
@@ -41,30 +46,33 @@ object MiraiBOTGroupMessage {
             if (senderID == RainData.Master) {
                 logger.info { "是你的头" }
                 subject.sendMessage("是你的头")
-            }
-            else if ((1..5).random() <= 2) subject.sendMessage("是你的头")
+            } else if ((1..5).random() <= 2) subject.sendMessage("是你的头")
         }
         /**
          * OSM核心功能
          * 随机复读
          */
         if (RainData.IsRepeat == 1L) {
-            if (msg.indexOf("我的运势") == -1 && msg.indexOf("来图") == -1 && msg.indexOf("白毛") == -1 && msg.indexOf("猫耳") == -1 &&
-                msg.indexOf("壁纸") == -1 && msg.indexOf("新闻") == -1 && msg.indexOf("菜单") == -1 && msg.indexOf("白毛") == -1 &&
-                msg.indexOf("http:") == -1 && msg.indexOf("https:") == -1 && msg.indexOf(".com") == -1 && msg.indexOf(".cn") == -1 &&
-                msg.indexOf(".osm") == -1 && msg.indexOf("[at=all]") == -1&& msg.indexOf("[聊天记录]") == -1 && msg.indexOf("禁言抽奖") == -1) {
-                if ((1..100).random() <= RainData.PRepeat) {
-                    sender.nudge().sendTo(event.group)
-                    Thread {
-                        val wait = (RainData.RepeatDelay[0]..RainData.RepeatDelay[1]).random()
-                        logger.info { "触发了复读 -> " + (wait/1000).toInt() +"秒后复读：$msg" }
-                        Thread.sleep(wait)
-                        CoroutineScope(RainBOT.coroutineContext).launch {
+            Thread {
+                CoroutineScope(RainBOT.coroutineContext).launch {
+                    if ((1..100).random() <= RainData.PRepeat) {
+                        var isIgnore = false
+                        for (m in RainData.RepeatIgnore) {
+                            if (msg.indexOf(m) != -1) {
+                                isIgnore = true
+                                break;
+                            }
+                        }
+                        if (!isIgnore) {
+                            sender.nudge().sendTo(event.group)
+                            val wait = (RainData.RepeatDelay[0]..RainData.RepeatDelay[1]).random()
+                            logger.info { "触发了复读 -> " + (wait / 1000).toInt() + "秒后复读：$msg" }
+                            Thread.sleep(wait)
                             subject.sendMessage(messageChain)
                         }
-                    }.start()
+                    }
                 }
-            }
+            }.start()
         }
         /**
          * OSM核心功能
@@ -80,29 +88,33 @@ object MiraiBOTGroupMessage {
                 subject.sendMessage(sb.toString())
             }
             if ((1..100).random() <= RainData.PSayNo) {
-                val whereno = msg.indexOf("不")
-                if (whereno > 0 && msg.length > whereno) {
-                    val w = msg[whereno + 1]
-                    logger.info { "触发了随机反驳不 -> $w" }
-                    if (w == msg[whereno - 1]) {
-                        val r = (1..4).random()
-                        if (r == 1) {
-                            subject.sendMessage("不$w")
-                        } else if (r == 2) {
-                            subject.sendMessage("必不$w")
-                        } else if (r == 3) {
-                            if (w != '是') subject.sendMessage("$w")
-                            else subject.sendMessage("${w}的")
-                        } else {
-                            subject.sendMessage("不想${w}可以不$w")
-                        }
-                    } else {
-                        subject.sendMessage("不想${w}可以不$w")
-                    }
-                } else if (whereno == 0 && msg.length > 1) {
-                    val w = msg[1]
-                    logger.info { "触发了随机反驳不 -> $w" }
-                    subject.sendMessage("不想${w}可以不$w")
+//                val whereno = msg.indexOf("不")
+//                if (whereno > 0 && msg.length > whereno) {
+//                    val w = msg[whereno + 1]
+//                    logger.info { "触发了随机反驳不 -> $w" }
+//                    if (w == msg[whereno - 1]) {
+//                        val r = (1..4).random()
+//                        if (r == 1) {
+//                            subject.sendMessage("不$w")
+//                        } else if (r == 2) {
+//                            subject.sendMessage("必不$w")
+//                        } else if (r == 3) {
+//                            if (w != '是') subject.sendMessage("$w")
+//                            else subject.sendMessage("${w}的")
+//                        } else {
+//                            subject.sendMessage("不想${w}可以不$w")
+//                        }
+//                    } else {
+//                        subject.sendMessage("不想${w}可以不$w")
+//                    }
+//                } else if (whereno == 0 && msg.length > 1) {
+//                    val w = msg[1]
+//                    logger.info { "触发了随机反驳不 -> $w" }
+//                    subject.sendMessage("不想${w}可以不$w")
+//                }
+                val m = msg.getSayNo()
+                if (m != "") {
+                    subject.sendMessage(m)
                 }
             }
         }
@@ -119,7 +131,7 @@ object MiraiBOTGroupMessage {
                         if (senderID != RainData.Master) {
                             whomute[senderID] = senderID
                             val time = (RainData.MuteTime[0]..RainData.MuteTime[1]).random()
-                            subject.sendMessage("开奖啦！禁言时长：" + (time/60).toInt() + "分钟。\n你现在有3秒时间发送忏悔拒绝领奖！")
+                            subject.sendMessage("开奖啦！禁言时长：" + (time / 60).toInt() + "分钟。\n你现在有3秒时间发送忏悔拒绝领奖！")
                             Thread.sleep(3000)
                             sender.mute(time.toInt())
                         } else {
@@ -140,7 +152,7 @@ object MiraiBOTGroupMessage {
                             if (whomute[sender.id] != sender.id) {
                                 event.subject.sendMessage("忏悔失败，你是被管理员禁言的，不能为你解禁。")
                             } else {
-                                val m : NormalMember? = event.group.getMember(sender.id)
+                                val m: NormalMember? = event.group.getMember(sender.id)
                                 if (m?.isMuted == true) {
                                     m.unmute()
                                     whomute.remove(sender.id)
@@ -148,7 +160,7 @@ object MiraiBOTGroupMessage {
                                 }
                             }
                         } else {
-                            val m : NormalMember? = event.group.getMember(sender.id)
+                            val m: NormalMember? = event.group.getMember(sender.id)
                             if (m?.isMuted == true) {
                                 m.unmute()
                                 whomute.remove(sender.id)
@@ -385,7 +397,8 @@ object MiraiBOTGroupMessage {
             event.subject.sendMessage(
                 "「食用指南」\n\n发送【来图】【白毛】【猫耳】【壁纸】获取随机美图\n" +
                         "发送【新闻】可以获取今天的60秒读懂世界\n发送【我的运势】可以了解今天的运势情况\n" +
-                        "发送【禁言抽奖】可以获取随机时长禁言奖励\n\n-> By https://mili.cyou <-\nSee Also: https://github.com/milimoe")
+                        "发送【禁言抽奖】可以获取随机时长禁言奖励\n\n-> By https://mili.cyou <-\nSee Also: https://github.com/milimoe"
+            )
         }
         /**
          * OSM核心功能
@@ -403,26 +416,31 @@ object MiraiBOTGroupMessage {
                         val img = File(RainData.BaizhouPath).resolve("dj$bz.png").uploadAsImage(subject)
                         subject.sendMessage(img)
                     }
+                    
                     in 7..11 -> { // 中吉
                         val bz = (1..2).random()
                         val img = File(RainData.BaizhouPath).resolve("zj$bz.png").uploadAsImage(subject)
                         subject.sendMessage(img)
                     }
+                    
                     in 12..16 -> { // 吉
                         val bz = (1..4).random()
                         val img = File(RainData.BaizhouPath).resolve("j$bz.png").uploadAsImage(subject)
                         subject.sendMessage(img)
                     }
+                    
                     in 17..23 -> { // 末吉
                         val bz = (1..2).random()
                         val img = File(RainData.BaizhouPath).resolve("mj$bz.png").uploadAsImage(subject)
                         subject.sendMessage(img)
                     }
+                    
                     in 24..26 -> { // 大凶
                         val bz = (1..2).random()
                         val img = File(RainData.BaizhouPath).resolve("dx$bz.png").uploadAsImage(subject)
                         subject.sendMessage(img)
                     }
+                    
                     in 27..30 -> { // 凶
                         val bz = (1..2).random()
                         val img = File(RainData.BaizhouPath).resolve("x$bz.png").uploadAsImage(subject)
@@ -447,11 +465,13 @@ object MiraiBOTGroupMessage {
          * OSM核心
          */
         if (msg == ".osm -info") {
-            subject.sendMessage("OSM插件运行状态：\n随机复读：" + RainData.IsRepeat.isOn() + "\n随机OSM：" + RainData.IsOSM.isOn() +
-                    "\n随机反驳不：" + RainData.IsSayNo.isOn() + "\n禁言抽奖：" + RainData.IsMute.isOn() +
-                    "\n随机复读概率：${RainData.PRepeat}%\n随机OSM概率：${RainData.POSM}%" +
-                    "\n随机反驳不概率：${RainData.PSayNo}%\n禁言抽奖时长区间：${RainData.MuteTime[0]}至${RainData.MuteTime[1]}秒" +
-                    "\n随机复读延迟区间：${RainData.RepeatDelay[0]/1000}至${RainData.RepeatDelay[1]/1000}秒")
+            subject.sendMessage(
+                "OSM插件运行状态：\n随机复读：" + RainData.IsRepeat.isOn() + "\n随机OSM：" + RainData.IsOSM.isOn() +
+                        "\n随机反驳不：" + RainData.IsSayNo.isOn() + "\n禁言抽奖：" + RainData.IsMute.isOn() +
+                        "\n随机复读概率：${RainData.PRepeat}%\n随机OSM概率：${RainData.POSM}%" +
+                        "\n随机反驳不概率：${RainData.PSayNo}%\n禁言抽奖时长区间：${RainData.MuteTime[0]}至${RainData.MuteTime[1]}秒" +
+                        "\n随机复读延迟区间：${RainData.RepeatDelay[0] / 1000}至${RainData.RepeatDelay[1] / 1000}秒"
+            )
         } else if (msg == ".osm") {
             subject.sendMessage("OSM Core\nVersion: ${OSMCore.version}${OSMCore.version2}\nMaster: ${RainData.Master}\nAuthor: github.com/milimoe\nBuilt on ${OSMCore.time}")
         }
@@ -501,6 +521,113 @@ fun String.getLeftString(len: Int): String {
     return ""
 }
 
+fun String.getSayNo(): String {
+    val whereno = this.indexOf("不")
+    val wheremei = this.indexOf("没")
+    if (whereno >= 0 && whereno != this.length - 1) {
+        var type: Int = 0
+        val w = this[whereno + 1]
+        logger.info { "触发了随机反驳不 -> $w" }
+        if (whereno > 0) {
+            val newmsg = this.substring(whereno, this.length - 1)
+            if (w == this[whereno - 1]) {
+                type = (0..2).random()
+                when (type) {
+                    0 -> {
+                        return "不${w}"
+                    }
+                    
+                    1 -> {
+                        return if (w == '是') "${w}的"
+                        else "$w"
+                    }
+                    
+                    2 -> {
+                        return "我不好说"
+                    }
+                }
+            } else
+                if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 || newmsg.indexOf("啊") != -1 || newmsg.indexOf(
+                        "么"
+                    ) != -1 ||
+                    newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1
+                ) {
+                    type = (0..4).random()
+                    when (type) {
+                        0 -> {
+                            return "不${w}"
+                        }
+                        
+                        1 -> {
+                            return "必不${w}"
+                        }
+                        
+                        2 -> {
+                            return "从来不${w}"
+                        }
+                        
+                        3 -> {
+                            return "不会有人不${w}吧？"
+                        }
+                        
+                        4 -> {
+                            return "看我心情"
+                        }
+                    }
+                } else {
+                    return "不想${w}可以不${w}"
+                }
+        } else {
+            type = (0..2).random()
+            when (type) {
+                0 -> {
+                    return "可是我${w}"
+                }
+                
+                1 -> {
+                    return "我也不${w}"
+                }
+                
+                2 -> {
+                    return "你不${w}不代表别人不${w}"
+                }
+            }
+        }
+    } else if (wheremei >= 0 && wheremei != this.length - 1) {
+        var type: Int = 0
+        val w = this[wheremei + 1]
+        logger.info { "触发了随机反驳不 -> $w" }
+        type = (0..5).random()
+        when (type) {
+            0 -> {
+                return "可是我${w}"
+            }
+            
+            1 -> {
+                return "我也没${w}"
+            }
+            
+            2 -> {
+                return "你不${w}不代表别人不${w}"
+            }
+            
+            3 -> {
+                return "必没"
+            }
+            
+            4 -> {
+                return "我不好说"
+            }
+            
+            5 -> {
+                return "不会有人没${w}吧？"
+            }
+            
+        }
+    }
+    return ""
+}
+
 fun Char.isChinese(): Boolean {
     val ub: UnicodeBlock = UnicodeBlock.of(this)
     return ub === UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub === UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS || ub === UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub === UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B || ub === UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub === UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS || ub === UnicodeBlock.GENERAL_PUNCTUATION
@@ -525,7 +652,7 @@ fun downloadImg(url: URL, imagePath: String, tryCount: Int): String {
     } else "err"
 }
 
-fun getImg(coroutineContext: CoroutineContext, event: GroupMessageEvent , url: URL) {
+fun getImg(coroutineContext: CoroutineContext, event: GroupMessageEvent, url: URL) {
     var trycount = 3
     val scope = CoroutineScope(coroutineContext)
     // 启动一个下载图片，转发图片的协程
@@ -544,7 +671,7 @@ fun getImg(coroutineContext: CoroutineContext, event: GroupMessageEvent , url: U
                 logger.error("未能正确下载图片，尝试次数: $trycount，Time: $timeCost ms")
                 event.subject.sendMessage("图片获取失败>_<")
             }
-
+            
             else -> {
                 logger.info("获取到图片 $fileName，Time: $timeCost ms")
                 val img = File(RainData.ImgPath).resolve(fileName).uploadAsImage(event.group)

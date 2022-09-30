@@ -33,7 +33,28 @@ object RainData : AutoSavePluginData("Milimoe") { // "name" 是保存的文件�
     var ShidePath: String by value("") // 是的储存地址
     var YinpinPath: String by value("") // 音频储存地址
     var GeneralPath: String by value("") // 其他文件储存地址
-
+    
+    val RepeatIgnore: HashSet<String>  = hashSetOf(
+        "我的运势",
+        "来图",
+        "白毛",
+        "猫耳",
+        "壁纸",
+        "新闻",
+        "菜单",
+        "白毛",
+        "http:",
+        "https:",
+        ".com",
+        ".cn",
+        ".osm",
+        "[at=all]",
+        "[聊天记录]",
+        "禁言抽奖",
+        "撤回；",
+        "/撤回"
+    )
+    
     // 带默认值的非空 map.
     // notnullMap[1] 的返回值总是非 null 的 MutableMap<Int, String>
     var notnullMap
