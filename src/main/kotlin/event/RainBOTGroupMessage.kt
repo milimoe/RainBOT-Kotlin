@@ -530,6 +530,22 @@ fun String.getSayNo(): String {
         logger.info { "触发了随机反驳不 -> $w" }
         if (whereno > 0) {
             val newmsg = this.substring(whereno, this.length - 1)
+            if (newmsg[1] == '了') {
+                type = (0..2).random()
+                when (type) {
+                    0 -> {
+                        return "你说不${w}就不${w}？"
+                    }
+        
+                    1 -> {
+                        return "不一定"
+                    }
+        
+                    2 -> {
+                        return "不想${w}可以不${w}"
+                    }
+                }
+            }
             if (w == this[whereno - 1]) {
                 type = (0..2).random()
                 when (type) {
@@ -546,12 +562,9 @@ fun String.getSayNo(): String {
                         return "我不好说"
                     }
                 }
-            } else
-                if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 || newmsg.indexOf("啊") != -1 || newmsg.indexOf(
-                        "么"
-                    ) != -1 ||
-                    newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1
-                ) {
+            } else if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
+                newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
+                newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
                     type = (0..4).random()
                     when (type) {
                         0 -> {
