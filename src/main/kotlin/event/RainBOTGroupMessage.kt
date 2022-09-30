@@ -88,30 +88,6 @@ object MiraiBOTGroupMessage {
                 subject.sendMessage(sb.toString())
             }
             if ((1..100).random() <= RainData.PSayNo) {
-//                val whereno = msg.indexOf("不")
-//                if (whereno > 0 && msg.length > whereno) {
-//                    val w = msg[whereno + 1]
-//                    logger.info { "触发了随机反驳不 -> $w" }
-//                    if (w == msg[whereno - 1]) {
-//                        val r = (1..4).random()
-//                        if (r == 1) {
-//                            subject.sendMessage("不$w")
-//                        } else if (r == 2) {
-//                            subject.sendMessage("必不$w")
-//                        } else if (r == 3) {
-//                            if (w != '是') subject.sendMessage("$w")
-//                            else subject.sendMessage("${w}的")
-//                        } else {
-//                            subject.sendMessage("不想${w}可以不$w")
-//                        }
-//                    } else {
-//                        subject.sendMessage("不想${w}可以不$w")
-//                    }
-//                } else if (whereno == 0 && msg.length > 1) {
-//                    val w = msg[1]
-//                    logger.info { "触发了随机反驳不 -> $w" }
-//                    subject.sendMessage("不想${w}可以不$w")
-//                }
                 val m = msg.getSayNo()
                 if (m != "") {
                     subject.sendMessage(m)
@@ -526,11 +502,25 @@ fun String.getSayNo(): String {
     val wheremei = this.indexOf("没")
     if (whereno >= 0 && whereno != this.length - 1) {
         var type: Int = 0
-        val w = this[whereno + 1]
+        var w = this[whereno + 1]
         logger.info { "触发了随机反驳不 -> $w" }
         if (whereno > 0) {
             val newmsg = this.substring(whereno, this.length - 1)
-            if (newmsg[1] == '了') {
+            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就') && this[whereno] != '这') {
+                if (whereno + 1 < this.length) {
+                    w = this[whereno + 2]
+                    type = (0..1).random()
+                    when (type) {
+                        0 -> {
+                            return "你${w}别人不一定${w}啊"
+                        }
+        
+                        1 -> {
+                            return "这都${w}？"
+                        }
+                    }
+                }
+                w = this[whereno - 1]
                 type = (0..2).random()
                 when (type) {
                     0 -> {
@@ -588,10 +578,27 @@ fun String.getSayNo(): String {
                         }
                     }
                 } else {
-                    return "不想${w}可以不${w}"
+                    type = (0..3).random()
+                    when (type) {
+                        0 -> {
+                            return "可是我${w}"
+                        }
+            
+                        1 -> {
+                            return "我也不${w}"
+                        }
+            
+                        2 -> {
+                            return "你不${w}不代表别人不${w}"
+                        }
+            
+                        3 -> {
+                            return "$w"
+                        }
+                    }
                 }
         } else {
-            type = (0..2).random()
+            type = (0..4).random()
             when (type) {
                 0 -> {
                     return "可是我${w}"
@@ -603,6 +610,14 @@ fun String.getSayNo(): String {
                 
                 2 -> {
                     return "你不${w}不代表别人不${w}"
+                }
+                
+                3 -> {
+                    return "$w"
+                }
+                
+                4 -> {
+                    return "不想${w}可以不${w}"
                 }
             }
         }
