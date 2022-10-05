@@ -7,11 +7,9 @@ import net.mamoe.mirai.contact.ContactList
 import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.contact.getMember
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.message.data.MessageChain
+import net.mamoe.mirai.event.events.operatorOrBot
+import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
-import net.mamoe.mirai.message.data.QuoteReply
-import net.mamoe.mirai.message.data.at
-import net.mamoe.mirai.message.data.recallSource
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import net.mamoe.mirai.utils.info
 import org.milimoe.RainBOT
@@ -430,6 +428,21 @@ object MiraiBOTGroupMessage {
                 }
             }
         }
+        if (msg.getLeftString(2) == "查看" && msg.getRightString(2) == "运势") {
+            val mid = msg.getNumber()
+            if (mid != "") {
+                val m = event.group.getMember(mid.toLong())
+                if (m != null) {
+                    if (dailys.containsKey(mid.toLong())) {
+                        event.subject.sendMessage("${m.nick}（${m.id}）" + "的今日运势是：\n${dailys[m.id]}")
+                    } else {
+                        event.subject.sendMessage("TA今天还没有抽取运势哦，快去提醒TA！")
+                    }
+                } else {
+                    event.subject.sendMessage("群内查无此人。")
+                }
+            }
+        }
         if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && senderID == RainData.Master) {
             val m = messageChain[QuoteReply]
             if (m != null) {
@@ -493,6 +506,13 @@ fun String.getNumber(): String {
 fun String.getLeftString(len: Int): String {
     if (this.length >= len) {
         return this.substring(0, len)
+    }
+    return ""
+}
+
+fun String.getRightString(len: Int): String {
+    if (this.length >= len) {
+        return this.substring(length - len, length)
     }
     return ""
 }

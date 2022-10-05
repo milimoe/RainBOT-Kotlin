@@ -52,7 +52,10 @@ object RainData : AutoSavePluginData("Milimoe") { // "name" 是保存的文件�
         "[聊天记录]",
         "禁言抽奖",
         "撤回；",
-        "/撤回"
+        "/撤回",
+        "白丝",
+        "loli",
+        "黑丝"
     )
     
     // 带默认值的非空 map.
@@ -77,8 +80,8 @@ object RainSetting : ReadOnlyPluginConfig("Milimoe") { // "MySetting" 是保存�
 
 object OSMCore {
     const val version = "v1.0"
-    const val version2 = "release"
-    const val time = "Sept. 30, 2022"
+    const val version2 = "patch2"
+    const val time = "Oct. 4, 2022"
 }
 
 @Serializable
