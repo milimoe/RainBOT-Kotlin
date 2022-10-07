@@ -10,6 +10,7 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.contact.ContactList
 import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.contact.getMember
 import net.mamoe.mirai.event.GlobalEventChannel
 import net.mamoe.mirai.event.events.FriendMessageEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
@@ -17,6 +18,7 @@ import net.mamoe.mirai.event.events.GroupTempMessageEvent
 import net.mamoe.mirai.event.events.MemberMuteEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.at
 import net.mamoe.mirai.message.data.messageChainOf
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import net.mamoe.mirai.utils.info
@@ -36,7 +38,7 @@ object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.0.0",
+        version = "1.0.3",
     ) {
         author("Milimoe")
     }
@@ -60,6 +62,7 @@ object RainBOT : KotlinPlugin(
             var isrefresh = false
             var issaygoodmorning = false
             var issaygoodnight = false
+            var iscall = false
             while (true) {
                 Thread.sleep(1000)
                 val current = LocalDateTime.now()
@@ -84,6 +87,17 @@ object RainBOT : KotlinPlugin(
                     }
                 } else {
                     if (issaygoodmorning) issaygoodmorning = false
+                }
+                if (formatted == "20:30")
+                {
+                    if (!iscall)
+                    {
+                        iscall = true
+                        sayCall()
+                        logger.info { "定制版通知" }
+                    }
+                } else {
+                    if (iscall) iscall = false
                 }
                 if (formatted == "23:50")
                 {
@@ -165,6 +179,10 @@ object RainBOT : KotlinPlugin(
                 g.sendMessage(chain)
             }
         }
+    }
+    
+    private fun sayCall() {
+    
     }
 
     private fun setPath() {

@@ -374,6 +374,13 @@ object MiraiBOTGroupMessage {
                         "发送【禁言抽奖】可以获取随机时长禁言奖励\n\n-> By https://mili.cyou <-\nSee Also: https://github.com/milimoe"
             )
         }
+        if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && senderID == RainData.Master) {
+            val m = messageChain[QuoteReply]
+            if (m != null) {
+                m.recallSource()
+                messageChain.recall()
+            }
+        }
         /**
          * OSM核心功能
          * 每日运势
@@ -441,13 +448,6 @@ object MiraiBOTGroupMessage {
                 } else {
                     event.subject.sendMessage("群内查无此人。")
                 }
-            }
-        }
-        if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && senderID == RainData.Master) {
-            val m = messageChain[QuoteReply]
-            if (m != null) {
-                m.recallSource()
-                messageChain.recall()
             }
         }
         /**
@@ -656,7 +656,7 @@ fun String.getSayNo(): String {
             }
             
             2 -> {
-                return "你不${w}不代表别人不${w}"
+                return "你没${w}不代表别人没${w}"
             }
             
             3 -> {
