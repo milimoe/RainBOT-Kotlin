@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "org.milimoe"
-version = "1.0.0"
+version = "1.0.4"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")

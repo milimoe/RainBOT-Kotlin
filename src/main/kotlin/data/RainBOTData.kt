@@ -80,8 +80,8 @@ object RainSetting : ReadOnlyPluginConfig("Milimoe") { // "MySetting" 是保存�
 
 object OSMCore {
     const val version = "v1.0"
-    const val version2 = "patch3"
-    const val time = "Oct. 7, 2022"
+    const val version2 = "patch4"
+    const val time = "Oct. 8, 2022"
 }
 
 @Serializable

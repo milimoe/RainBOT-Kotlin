@@ -335,6 +335,20 @@ object MiraiBOTGroupMessage {
                 subject.sendMessage(img)
                 return
             }
+            // 随机答复 是呀
+            val image: Image? by messageChain.orNull()
+            if (image != null) {
+               if ((1..100).random() <= RainData.POSM) {
+                    val img = image!!.imageId
+                    val png = File(RainData.GeneralPath).resolve("osm.png").uploadAsImage(subject).imageId
+                    val gif = File(RainData.GeneralPath).resolve("osm.gif").uploadAsImage(subject).imageId
+                    val jpg = File(RainData.GeneralPath).resolve("osm.jpg").uploadAsImage(subject).imageId
+                    if (img == png || img == gif || img == jpg) {
+                        val img = File(RainData.ShidePath).resolve("sd7.gif").uploadAsImage(subject)
+                        subject.sendMessage(img)
+                    }
+                }
+            }
         }
         /**
          * OSM基本功能组
@@ -365,6 +379,9 @@ object MiraiBOTGroupMessage {
             val count = (1..10).random()
             val img = File(RainData.ShidePath).resolve("sd$count.gif").uploadAsImage(subject)
             subject.sendMessage(img)
+        } else if (msg.indexOf("是呀") != -1) {
+            val img = File(RainData.ShidePath).resolve("sd7.gif").uploadAsImage(subject)
+            subject.sendMessage(img)
         } else if (msg == "新闻") {
             getImg(coroutineContext, event, URL("https://api.vvhan.com/api/60s"))
         } else if (msg == "菜单") {
@@ -374,6 +391,7 @@ object MiraiBOTGroupMessage {
                         "发送【禁言抽奖】可以获取随机时长禁言奖励\n\n-> By https://mili.cyou <-\nSee Also: https://github.com/milimoe"
             )
         }
+        // 撤回
         if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && senderID == RainData.Master) {
             val m = messageChain[QuoteReply]
             if (m != null) {
