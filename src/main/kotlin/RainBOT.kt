@@ -38,7 +38,7 @@ object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.0.4",
+        version = "1.0.5",
     ) {
         author("Milimoe")
     }
@@ -87,17 +87,6 @@ object RainBOT : KotlinPlugin(
                     }
                 } else {
                     if (issaygoodmorning) issaygoodmorning = false
-                }
-                if (formatted == "20:30")
-                {
-                    if (!iscall)
-                    {
-                        iscall = true
-                        sayCall()
-                        logger.info { "定制版通知" }
-                    }
-                } else {
-                    if (iscall) iscall = false
                 }
                 if (formatted == "23:50")
                 {
@@ -179,10 +168,6 @@ object RainBOT : KotlinPlugin(
                 g.sendMessage(chain)
             }
         }
-    }
-    
-    private fun sayCall() {
-    
     }
 
     private fun setPath() {

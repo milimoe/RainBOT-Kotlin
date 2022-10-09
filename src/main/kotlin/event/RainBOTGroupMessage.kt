@@ -151,7 +151,7 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 禁言/解禁所有人
          */
-        if (senderID == RainData.Master || senderID == RainData.BOTQQ) {
+        if (senderID == RainData.Master || senderID == RainData.BOTQQ || RainData.MuteAccessGroup.contains(senderID)) {
             if (msg.getLeftString(5) == "禁言所有人") {
                 val contacts: ContactList<NormalMember> = subject.members
                 if (msg == "禁言所有人") {
@@ -219,7 +219,9 @@ object MiraiBOTGroupMessage {
                     }
                 }
             }
-            if (msg == "解禁所有人") {
+        }
+        if (senderID == RainData.Master || senderID == RainData.BOTQQ || RainData.UnmuteAccessGroup.contains(senderID)) {
+            if (msg.getLeftString(5) == "解禁所有人") {
                 whomute.clear()
                 logger.info { "已清空禁言成员表" }
                 val contacts: ContactList<NormalMember> = subject.members
@@ -338,14 +340,14 @@ object MiraiBOTGroupMessage {
             // 随机答复 是呀
             val image: Image? by messageChain.orNull()
             if (image != null) {
-               if ((1..100).random() <= RainData.POSM) {
+               if ((1..100).random() <= RainData.POSM + RainData.PRepeat + RainData.PSayNo) {
                     val img = image!!.imageId
                     val png = File(RainData.GeneralPath).resolve("osm.png").uploadAsImage(subject).imageId
                     val gif = File(RainData.GeneralPath).resolve("osm.gif").uploadAsImage(subject).imageId
                     val jpg = File(RainData.GeneralPath).resolve("osm.jpg").uploadAsImage(subject).imageId
                     if (img == png || img == gif || img == jpg) {
-                        val img = File(RainData.ShidePath).resolve("sd7.gif").uploadAsImage(subject)
-                        subject.sendMessage(img)
+                        val newimg = File(RainData.ShidePath).resolve("sd7.gif").uploadAsImage(subject)
+                        subject.sendMessage(newimg)
                     }
                 }
             }
@@ -392,7 +394,7 @@ object MiraiBOTGroupMessage {
             )
         }
         // 撤回
-        if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && senderID == RainData.Master) {
+        if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && (senderID == RainData.Master || RainData.RecallAccessGroup.contains(senderID))) {
             val m = messageChain[QuoteReply]
             if (m != null) {
                 m.recallSource()
@@ -479,7 +481,46 @@ object MiraiBOTGroupMessage {
                         "\n随机反驳不概率：${RainData.PSayNo}%\n禁言抽奖时长区间：${RainData.MuteTime[0]}至${RainData.MuteTime[1]}秒" +
                         "\n随机复读延迟区间：${RainData.RepeatDelay[0] / 1000}至${RainData.RepeatDelay[1] / 1000}秒"
             )
-        } else if (msg == ".osm") {
+        } else if (msg == ".osm -muteaccess") {
+            var m = "禁言权限组成员：\n"
+            var count = 0
+            for (i in RainData.MuteAccessGroup) {
+                if (event.group.getMember(i) != null)
+                {
+                    m = m.plus("${i}\n")
+                    count++
+                }
+            }
+            m = if (count > 0) m.plus("本群共${count}名禁言权限组成员")
+            else m.plus("本群无禁言权限组成员")
+            subject.sendMessage(m)
+        } else if (msg == ".osm -unmuteaccess") {
+            var m = "解禁权限组成员：\n"
+            var count = 0
+            for (i in RainData.UnmuteAccessGroup) {
+                if (event.group.getMember(i) != null)
+                {
+                    m = m.plus("${i}\n")
+                    count++
+                }
+            }
+            m = if (count > 0) m.plus("本群共${count}名解禁权限组成员")
+            else m.plus("本群无解禁权限组成员")
+            subject.sendMessage(m)
+        } else if (msg == ".osm -recallaccess") {
+            var m = "解禁权限组成员：\n"
+            var count = 0
+            for (i in RainData.RecallAccessGroup) {
+                if (event.group.getMember(i) != null)
+                {
+                    m = m.plus("${i}\n")
+                    count++
+                }
+            }
+            m = if (count > 0) m.plus("本群共${count}名撤回权限组成员")
+            else m.plus("本群无撤回权限组成员")
+            subject.sendMessage(m)
+        } else if (msg.getLeftString(4) == ".osm") {
             subject.sendMessage("OSM Core\nVersion: ${OSMCore.version}${OSMCore.version2}\nMaster: ${RainData.Master}\nAuthor: github.com/milimoe\nBuilt on ${OSMCore.time}")
         }
     }
@@ -575,7 +616,7 @@ fun String.getSayNo(): String {
                 }
             }
             if (w == this[whereno - 1]) {
-                type = (0..2).random()
+                type = (0..4).random()
                 when (type) {
                     0 -> {
                         return "不${w}"
@@ -589,11 +630,19 @@ fun String.getSayNo(): String {
                     2 -> {
                         return "我不好说"
                     }
+                    
+                    3 -> {
+                        return "想${w}可以直接$w"
+                    }
+                    
+                    4 -> {
+                        return "我觉得是不$w"
+                    }
                 }
             } else if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
                 newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
                 newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
-                    type = (0..4).random()
+                    type = (0..5).random()
                     when (type) {
                         0 -> {
                             return "不${w}"
@@ -614,9 +663,13 @@ fun String.getSayNo(): String {
                         4 -> {
                             return "看我心情"
                         }
+                        
+                        5 -> {
+                            return "${w}又能怎样呢？"
+                        }
                     }
                 } else {
-                    type = (0..3).random()
+                    type = (0..5).random()
                     when (type) {
                         0 -> {
                             return "可是我${w}"
@@ -632,6 +685,14 @@ fun String.getSayNo(): String {
             
                         3 -> {
                             return "$w"
+                        }
+            
+                        4 -> {
+                            return "想${w}可以直接$w"
+                        }
+            
+                        5 -> {
+                            return "我觉得最好不$w"
                         }
                     }
                 }

@@ -58,6 +58,10 @@ object RainData : AutoSavePluginData("Milimoe") { // "name" 是保存的文件�
         "黑丝"
     )
     
+    val MuteAccessGroup: List<Long> by value()
+    val UnmuteAccessGroup: List<Long> by value()
+    val RecallAccessGroup: List<Long> by value()
+    
     // 带默认值的非空 map.
     // notnullMap[1] 的返回值总是非 null 的 MutableMap<Int, String>
     var notnullMap
@@ -80,8 +84,8 @@ object RainSetting : ReadOnlyPluginConfig("Milimoe") { // "MySetting" 是保存�
 
 object OSMCore {
     const val version = "v1.0"
-    const val version2 = "patch4"
-    const val time = "Oct. 8, 2022"
+    const val version2 = "patch5"
+    const val time = "Oct. 9, 2022"
 }
 
 @Serializable
