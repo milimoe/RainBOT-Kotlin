@@ -1,5 +1,6 @@
 package org.milimoe.event
 
+import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
@@ -579,16 +580,17 @@ fun String.getRightString(len: Int): String {
 fun String.getSayNo(): String {
     val whereno = this.indexOf("不")
     val wheremei = this.indexOf("没")
+    val whereshi = this.indexOf("是")
     if (whereno >= 0 && whereno != this.length - 1) {
         var type: Int = 0
         var w = this[whereno + 1]
         logger.info { "触发了随机反驳不 -> $w" }
         if (whereno > 0) {
             val newmsg = this.substring(whereno, this.length - 1)
-            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就') && this[whereno] != '这') {
+            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就' || this[whereno + 1] == '都') && this[whereno] != '这') {
                 if (whereno + 1 < this.length) {
                     w = this[whereno + 2]
-                    type = (0..1).random()
+                    type = (0..2).random()
                     when (type) {
                         0 -> {
                             return "你${w}别人不一定${w}啊"
@@ -596,6 +598,10 @@ fun String.getSayNo(): String {
         
                         1 -> {
                             return "这都${w}？"
+                        }
+        
+                        2 -> {
+                            return "不懂就问，${w}了又能怎样呢？"
                         }
                     }
                 }
@@ -636,7 +642,7 @@ fun String.getSayNo(): String {
                     }
                     
                     4 -> {
-                        return "我觉得是不$w"
+                        return "我觉得是别$w"
                     }
                 }
             } else if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
@@ -692,12 +698,12 @@ fun String.getSayNo(): String {
                         }
             
                         5 -> {
-                            return "我觉得最好不$w"
+                            return "我觉得最好别$w"
                         }
                     }
                 }
         } else {
-            type = (0..4).random()
+            type = (0..5).random()
             when (type) {
                 0 -> {
                     return "可是我${w}"
@@ -718,13 +724,17 @@ fun String.getSayNo(): String {
                 4 -> {
                     return "不想${w}可以不${w}"
                 }
+                
+                5 -> {
+                    return "想${w}可以直接${w}"
+                }
             }
         }
     } else if (wheremei >= 0 && wheremei != this.length - 1) {
         var type: Int = 0
         val w = this[wheremei + 1]
-        logger.info { "触发了随机反驳不 -> $w" }
-        type = (0..5).random()
+        logger.info { "触发了随机反驳没 -> $w" }
+        type = (0..6).random()
         when (type) {
             0 -> {
                 return "可是我${w}"
@@ -750,6 +760,58 @@ fun String.getSayNo(): String {
                 return "不会有人没${w}吧？"
             }
             
+            6 -> {
+                return "没${w}也就这样了"
+            }
+            
+        }
+    } else if (whereshi > 0) {
+        val newmsg = this.substring(whereshi, this.length - 1)
+        if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
+            newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
+            newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
+            var type: Int = 0
+            val w = this[wheremei + 1]
+            logger.info { "触发了随机反驳是 -> $w" }
+            type = (0..8).random()
+            when (type) {
+                0 -> {
+                    return "是的"
+                }
+        
+                1 -> {
+                    return "不是"
+                }
+        
+                2 -> {
+                    return "是不是和我有关系吗？"
+                }
+        
+                3 -> {
+                    return "我觉得最好不是"
+                }
+        
+                4 -> {
+                    return "是不是又能怎样？"
+                }
+        
+                5 -> {
+                    return "osm"
+                }
+        
+                6 -> {
+                    return "应该是吧"
+                }
+        
+                7 -> {
+                    return "我觉得是"
+                }
+        
+                8 -> {
+                    return "你说是就是"
+                }
+        
+            }
         }
     }
     return ""

@@ -148,7 +148,7 @@ object RainBOT : KotlinPlugin(
                     else -> {
                         logger.info("获取到图片 $fileName，Time: $timeCost ms")
                         for (g in groups) {
-                            var img = File(RainData.ImgPath).resolve(fileName).uploadAsImage(g)
+                            val img = File(RainData.ImgPath).resolve(fileName).uploadAsImage(g)
                             val chain = messageChainOf(PlainText("早上好早上好～").plus(img))
                             g.sendMessage(chain)
                         }
