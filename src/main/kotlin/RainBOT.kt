@@ -62,7 +62,6 @@ object RainBOT : KotlinPlugin(
             var isrefresh = false
             var issaygoodmorning = false
             var issaygoodnight = false
-            var iscall = false
             while (true) {
                 Thread.sleep(1000)
                 val current = LocalDateTime.now()

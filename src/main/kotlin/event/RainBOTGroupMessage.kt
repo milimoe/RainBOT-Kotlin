@@ -581,13 +581,14 @@ fun String.getSayNo(): String {
     val whereno = this.indexOf("不")
     val wheremei = this.indexOf("没")
     val whereshi = this.indexOf("是")
+    val wherebie = this.indexOf("别")
     if (whereno >= 0 && whereno != this.length - 1) {
         var type: Int = 0
         var w = this[whereno + 1]
         logger.info { "触发了随机反驳不 -> $w" }
         if (whereno > 0) {
-            val newmsg = this.substring(whereno, this.length - 1)
-            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就' || this[whereno + 1] == '都') && this[whereno] != '这') {
+            val newmsg = this.substring(whereno, this.length)
+            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就' || this[whereno + 1] == '都' || this[whereno + 1] == '太') && this[whereno] != '这') {
                 if (whereno + 1 < this.length) {
                     w = this[whereno + 2]
                     type = (0..2).random()
@@ -604,25 +605,26 @@ fun String.getSayNo(): String {
                             return "不懂就问，${w}了又能怎样呢？"
                         }
                     }
-                }
-                w = this[whereno - 1]
-                type = (0..2).random()
-                when (type) {
-                    0 -> {
-                        return "你说不${w}就不${w}？"
-                    }
+                } else {
+                    w = this[whereno - 1]
+                    type = (0..2).random()
+                    when (type) {
+                        0 -> {
+                            return "你说不${w}就不${w}？"
+                        }
         
-                    1 -> {
-                        return "不一定"
-                    }
+                        1 -> {
+                            return "不一定"
+                        }
         
-                    2 -> {
-                        return "不想${w}可以不${w}"
+                        2 -> {
+                            return "不想${w}可以不${w}"
+                        }
                     }
                 }
             }
             if (w == this[whereno - 1]) {
-                type = (0..4).random()
+                type = (0..6).random()
                 when (type) {
                     0 -> {
                         return "不${w}"
@@ -644,11 +646,19 @@ fun String.getSayNo(): String {
                     4 -> {
                         return "我觉得是别$w"
                     }
+                    
+                    5 -> {
+                        return "${w}不${w}不是你说了算的"
+                    }
+                    
+                    6 -> {
+                        return "是这样的"
+                    }
                 }
             } else if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
                 newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
                 newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
-                    type = (0..5).random()
+                    type = (0..7).random()
                     when (type) {
                         0 -> {
                             return "不${w}"
@@ -673,9 +683,17 @@ fun String.getSayNo(): String {
                         5 -> {
                             return "${w}又能怎样呢？"
                         }
+                        
+                        6 -> {
+                            return "有一说一，确实"
+                        }
+                        
+                        7 -> {
+                            return "爱${w}不${w}"
+                        }
                     }
                 } else {
-                    type = (0..5).random()
+                    type = (0..8).random()
                     when (type) {
                         0 -> {
                             return "可是我${w}"
@@ -699,6 +717,18 @@ fun String.getSayNo(): String {
             
                         5 -> {
                             return "我觉得最好别$w"
+                        }
+            
+                        6 -> {
+                            return "确实"
+                        }
+            
+                        7 -> {
+                            return "从来不${w}"
+                        }
+            
+                        8 -> {
+                            return "不是谁都${w}的"
                         }
                     }
                 }
@@ -765,14 +795,13 @@ fun String.getSayNo(): String {
             }
             
         }
-    } else if (whereshi > 0) {
-        val newmsg = this.substring(whereshi, this.length - 1)
+    } else if (whereshi >= 0 && whereshi != this.length - 1) {
+        val newmsg = this.substring(whereshi, this.length)
         if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
             newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
             newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
             var type: Int = 0
-            val w = this[wheremei + 1]
-            logger.info { "触发了随机反驳是 -> $w" }
+            logger.info { "触发了随机反驳是" }
             type = (0..8).random()
             when (type) {
                 0 -> {
@@ -812,6 +841,41 @@ fun String.getSayNo(): String {
                 }
         
             }
+        }
+    } else if (wherebie >= 0 && wherebie != this.length - 1) {
+        var type: Int = 0
+        val w = this[wherebie + 1]
+        logger.info { "触发了随机反驳别 -> $w" }
+        type = (0..6).random()
+        when (type) {
+            0 -> {
+                return "算了吧，最好别${w}"
+            }
+        
+            1 -> {
+                return "从来不${w}"
+            }
+        
+            2 -> {
+                return "想${w}可以直接${w}"
+            }
+        
+            3 -> {
+                return "必不${w}"
+            }
+        
+            4 -> {
+                return "我不好说"
+            }
+        
+            5 -> {
+                return "不${w}明智之举"
+            }
+        
+            6 -> {
+                return "我觉得${w}不${w}都那样"
+            }
+        
         }
     }
     return ""
