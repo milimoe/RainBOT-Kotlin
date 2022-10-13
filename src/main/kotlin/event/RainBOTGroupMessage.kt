@@ -25,6 +25,9 @@ import java.nio.channels.Channels
 import java.nio.channels.FileChannel
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.coroutines.CoroutineContext
 
 object MiraiBOTGroupMessage {
@@ -51,27 +54,28 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 随机复读
          */
-        if (RainData.IsRepeat == 1L) {
-            Thread {
-                CoroutineScope(RainBOT.coroutineContext).launch {
-                    if ((1..100).random() <= RainData.PRepeat) {
-                        var isIgnore = false
-                        for (m in RainData.RepeatIgnore) {
-                            if (msg.indexOf(m) != -1) {
-                                isIgnore = true
-                                break;
-                            }
-                        }
-                        if (!isIgnore) {
-                            sender.nudge().sendTo(event.group)
-                            val wait = (RainData.RepeatDelay[0]..RainData.RepeatDelay[1]).random()
-                            logger.info { "触发了复读 -> " + (wait / 1000).toInt() + "秒后复读：$msg" }
-                            Thread.sleep(wait)
-                            subject.sendMessage(messageChain)
-                        }
+        if (RainData.IsRepeat == 1L)  {
+            if ((1..100).random() <= RainData.PRepeat) {
+                sender.nudge().sendTo(event.group)
+                val wait = (RainData.RepeatDelay[0]..RainData.RepeatDelay[1]).random()
+                var isIgnore = false
+                for (m in RainData.RepeatIgnore) {
+                    if (msg.indexOf(m) != -1) {
+                        isIgnore = true
+                        break;
                     }
                 }
-            }.start()
+                Timer().schedule(object: TimerTask() {
+                    override fun run() {
+                        CoroutineScope(RainBOT.coroutineContext).launch {
+                            if (!isIgnore) {
+                                logger.info { "触发了复读 -> " + (wait / 1000).toInt() + "秒后复读：$msg" }
+                                subject.sendMessage(messageChain)
+                            }
+                        }
+                    }
+                }, wait)
+            }
         }
         /**
          * OSM核心功能
@@ -120,12 +124,20 @@ object MiraiBOTGroupMessage {
         }
         if (msg == "忏悔") {
             if (senderID != RainData.BOTQQ || senderID != RainData.Master) {
-                Thread {
-                    CoroutineScope(RainBOT.coroutineContext).launch {
-                        Thread.sleep(3500)
-                        if (whomute.containsKey(sender.id)) {
-                            if (whomute[sender.id] != sender.id) {
-                                event.subject.sendMessage("忏悔失败，你是被管理员禁言的，不能为你解禁。")
+                Timer().schedule(object: TimerTask() {
+                    override fun run() {
+                        CoroutineScope(RainBOT.coroutineContext).launch {
+                            if (whomute.containsKey(sender.id)) {
+                                if (whomute[sender.id] != sender.id) {
+                                    event.subject.sendMessage("忏悔失败，你是被管理员禁言的，不能为你解禁。")
+                                } else {
+                                    val m: NormalMember? = event.group.getMember(sender.id)
+                                    if (m?.isMuted == true) {
+                                        m.unmute()
+                                        whomute.remove(sender.id)
+                                        event.subject.sendMessage("忏悔成功！！希望你保持纯真，保持野性的美。")
+                                    }
+                                }
                             } else {
                                 val m: NormalMember? = event.group.getMember(sender.id)
                                 if (m?.isMuted == true) {
@@ -134,16 +146,9 @@ object MiraiBOTGroupMessage {
                                     event.subject.sendMessage("忏悔成功！！希望你保持纯真，保持野性的美。")
                                 }
                             }
-                        } else {
-                            val m: NormalMember? = event.group.getMember(sender.id)
-                            if (m?.isMuted == true) {
-                                m.unmute()
-                                whomute.remove(sender.id)
-                                event.subject.sendMessage("忏悔成功！！希望你保持纯真，保持野性的美。")
-                            }
                         }
                     }
-                }.start()
+                }, 3500)
             } else {
                 subject.sendMessage("你无需忏悔。")
             }
@@ -588,7 +593,8 @@ fun String.getSayNo(): String {
         logger.info { "触发了随机反驳不 -> $w" }
         if (whereno > 0) {
             val newmsg = this.substring(whereno, this.length)
-            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就' || this[whereno + 1] == '都' || this[whereno + 1] == '太') && this[whereno] != '这') {
+            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就' ||
+                        this[whereno + 1] == '都' || this[whereno + 1] == '太' || this[whereno + 1] == '过') && this[whereno] != '这') {
                 if (whereno + 1 < this.length) {
                     w = this[whereno + 2]
                     type = (0..2).random()
