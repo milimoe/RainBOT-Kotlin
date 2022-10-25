@@ -77,6 +77,11 @@ object MiraiBOTGroupMessage {
                 }, wait)
             }
         }
+        if (msg.trim().getLeftString(4).lowercase() == "loli" && msg.trim().getRightString(3).lowercase() == "r18") {
+            whomute[senderID] = RainData.Master
+            sender.mute(9999)
+            subject.sendMessage("禁止通行！")
+        }
         /**
          * OSM核心功能
          * 随机反驳不
@@ -476,6 +481,11 @@ object MiraiBOTGroupMessage {
                 }
             }
         }
+        if (msg == "重置运势" && senderID == RainData.Master) {
+            org.milimoe.dailys.clear()
+            RainBOT.logger.info { "每日运势已刷新" }
+            event.subject.sendMessage("每日运势已刷新")
+        }
         /**
          * OSM核心
          */
@@ -595,7 +605,7 @@ fun String.getSayNo(): String {
             val newmsg = this.substring(whereno, this.length)
             if ((this[whereno + 1] == '了' || this[whereno + 1] == '就' ||
                         this[whereno + 1] == '都' || this[whereno + 1] == '太' || this[whereno + 1] == '过') && this[whereno] != '这') {
-                if (whereno + 1 < this.length) {
+                if (whereno + 2 < this.length) {
                     w = this[whereno + 2]
                     type = (0..2).random()
                     when (type) {
@@ -739,30 +749,72 @@ fun String.getSayNo(): String {
                     }
                 }
         } else {
-            type = (0..5).random()
-            when (type) {
-                0 -> {
-                    return "可是我${w}"
+            if ((this[whereno + 1] == '了' || this[whereno + 1] == '就' ||
+                    this[whereno + 1] == '都' || this[whereno + 1] == '太' || this[whereno + 1] == '过') && this[whereno] != '这') {
+                if (whereno + 2 < this.length)
+                {
+                    w = this[whereno + 2]
+                    type = (0..7).random()
+                    when (type) {
+                        0 -> {
+                            return "你${w}别人不一定${w}啊"
+                        }
+        
+                        1 -> {
+                            return "这都${w}？"
+                        }
+        
+                        2 -> {
+                            return "不懂就问，${w}了又能怎样呢？"
+                        }
+        
+                        3 -> {
+                            return "想${w}可以直接${w}"
+                        }
+        
+                        4 -> {
+                            return "我觉得最好别${w}吧"
+                        }
+        
+                        5 -> {
+                            return "${w}不${w}不是你说了算的"
+                        }
+        
+                        6 -> {
+                            return "有一说一，是这样的"
+                        }
+        
+                        7 -> {
+                            return "确实"
+                        }
+                    }
                 }
-                
-                1 -> {
-                    return "我也不${w}"
-                }
-                
-                2 -> {
-                    return "你不${w}不代表别人不${w}"
-                }
-                
-                3 -> {
-                    return "$w"
-                }
-                
-                4 -> {
-                    return "不想${w}可以不${w}"
-                }
-                
-                5 -> {
-                    return "想${w}可以直接${w}"
+            } else {
+                type = (0..5).random()
+                when (type) {
+                    0 -> {
+                        return "可是我${w}"
+                    }
+        
+                    1 -> {
+                        return "我也不${w}"
+                    }
+        
+                    2 -> {
+                        return "你不${w}不代表别人不${w}"
+                    }
+        
+                    3 -> {
+                        return "$w"
+                    }
+        
+                    4 -> {
+                        return "不想${w}可以不${w}"
+                    }
+        
+                    5 -> {
+                        return "想${w}可以直接${w}"
+                    }
                 }
             }
         }
