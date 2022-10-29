@@ -65,16 +65,16 @@ object MiraiBOTGroupMessage {
                         break;
                     }
                 }
-                Timer().schedule(object: TimerTask() {
-                    override fun run() {
-                        CoroutineScope(RainBOT.coroutineContext).launch {
-                            if (!isIgnore) {
-                                logger.info { "触发了复读 -> " + (wait / 1000).toInt() + "秒后复读：$msg" }
+                if (!isIgnore) {
+                    logger.info { "触发了复读 -> " + (wait / 1000).toInt() + "秒后复读：$msg" }
+                    Timer().schedule(object : TimerTask() {
+                        override fun run() {
+                            CoroutineScope(RainBOT.coroutineContext).launch {
                                 subject.sendMessage(messageChain)
                             }
                         }
-                    }
-                }, wait)
+                    }, wait)
+                }
             }
         }
         if (msg.trim().getLeftString(4).lowercase() == "loli" && msg.trim().getRightString(3).lowercase() == "r18") {
@@ -485,6 +485,36 @@ object MiraiBOTGroupMessage {
             org.milimoe.dailys.clear()
             RainBOT.logger.info { "每日运势已刷新" }
             event.subject.sendMessage("每日运势已刷新")
+        }
+        if (senderID == RainData.Master && msg.length != 4 && msg.getLeftString(2) == "重置" && msg.getRightString(2) == "运势") {
+            var m = messageChain.serializeToMiraiCode()
+            if (m.indexOf("[mirai:at:") == -1) {
+                subject.sendMessage("命令格式不正确\n请遵守格式：重置@1@2..@N 运势")
+                return
+            } else {
+                val o = "[mirai:at:"
+                m = m.replace("重置", "").trim()
+                m = m.replace("运势", "").trim()
+                val count = m.countString(o)
+                if (count == 0) return
+                val list = ArrayList<Long>()
+                for (i in 0..count) {
+                    m = m.replaceFirst(o, "").trim()
+                    val id = m.getAtQQNumber()
+                    if (id != "") {
+                        list.add(id.toLong())
+                        m = m.replaceFirst(list.last().toString() + "]", "").trim()
+                    }
+                }
+                if (list.isNotEmpty()) {
+                    for (c in list) {
+                        dailys.remove(c)
+                        event.subject.sendMessage(subject.getMember(c)?.nick + "（${c}）的每日运势已刷新")
+                    }
+                } else {
+                    subject.sendMessage("命令格式不正确\n请遵守格式：重置@1@2..@N 运势")
+                }
+            }
         }
         /**
          * OSM核心
