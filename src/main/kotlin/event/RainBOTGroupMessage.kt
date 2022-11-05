@@ -81,6 +81,7 @@ object MiraiBOTGroupMessage {
             whomute[senderID] = RainData.Master
             sender.mute(9999)
             subject.sendMessage("禁止通行！")
+            messageChain.recall()
         }
         /**
          * OSM核心功能
@@ -739,42 +740,98 @@ fun String.getSayNo(): String {
                         }
                     }
                 } else {
-                    type = (0..8).random()
+                    type = (0..22).random()
                     when (type) {
                         0 -> {
-                            return "可是我${w}"
-                        }
-            
-                        1 -> {
-                            return "我也不${w}"
-                        }
-            
-                        2 -> {
-                            return "你不${w}不代表别人不${w}"
-                        }
-            
-                        3 -> {
-                            return "$w"
-                        }
-            
-                        4 -> {
-                            return "想${w}可以直接$w"
-                        }
-            
-                        5 -> {
-                            return "我觉得最好别$w"
-                        }
-            
-                        6 -> {
                             return "确实"
                         }
             
-                        7 -> {
-                            return "从来不${w}"
+                        1 -> {
+                            return "不是谁都${w}的"
                         }
             
+                        2 -> {
+                            return "就这"
+                        }
+                        
+                        3 -> {
+                        return "可是我${w}"
+                        }
+    
+                        4 -> {
+                            return "我也不${w}"
+                        }
+    
+                        5 -> {
+                            return "你不${w}不代表别人不${w}"
+                        }
+    
+                        6 -> {
+                            return "$w"
+                        }
+    
+                        7 -> {
+                            return "不想${w}可以不${w}"
+                        }
+    
                         8 -> {
-                            return "不是谁都${w}的"
+                            return "想${w}可以直接${w}"
+                        }
+    
+                        9 -> {
+                            return "我觉得最好别${w}吧"
+                        }
+    
+                        10 -> {
+                            return "${w}不${w}不是你说了算的"
+                        }
+    
+                        11 -> {
+                            return "${w}不${w}就别来问群友了吧，成年人了可以自己拿主意"
+                        }
+    
+                        12 -> {
+                            return "不是，你觉得${w}不${w}对我有什么影响呢？"
+                        }
+    
+                        13 -> {
+                            return "不是很懂，你说下你为什么想${w}吧。"
+                        }
+    
+                        14 -> {
+                            return "太能${w}了"
+                        }
+    
+                        15 -> {
+                            return "太${w}了"
+                        }
+    
+                        16 -> {
+                            return "必${w}"
+                        }
+    
+                        17 -> {
+                            return "必不${w}"
+                        }
+    
+                        18 -> {
+                            return "从来不${w}"
+                        }
+    
+                        19 -> {
+                            return "${w}不${w}又能怎样？"
+                        }
+    
+                        20 -> {
+                            return "有一说一，确实"
+                        }
+    
+                        21 -> {
+                            return "爱${w}不${w}"
+                        }
+    
+                        22 -> {
+                            return "不${w}"
                         }
                     }
                 }
@@ -820,7 +877,7 @@ fun String.getSayNo(): String {
                     }
                 }
             } else {
-                type = (0..5).random()
+                type = (0..18).random()
                 when (type) {
                     0 -> {
                         return "可是我${w}"
@@ -844,6 +901,58 @@ fun String.getSayNo(): String {
         
                     5 -> {
                         return "想${w}可以直接${w}"
+                    }
+                    
+                    6 -> {
+                        return "我觉得最好别${w}吧"
+                    }
+    
+                    7 -> {
+                        return "${w}不${w}不是你说了算的"
+                    }
+    
+                    8 -> {
+                        return "${w}不${w}就别来问群友了吧，成年人了可以自己拿主意"
+                    }
+    
+                    9 -> {
+                        return "不是，你觉得${w}不${w}对我有什么影响呢？"
+                    }
+    
+                    10 -> {
+                        return "不是很懂，你说下你为什么想${w}吧。"
+                    }
+    
+                    11 -> {
+                        return "太能${w}了"
+                    }
+    
+                    12 -> {
+                        return "太${w}了"
+                    }
+    
+                    13 -> {
+                        return "必${w}"
+                    }
+    
+                    14 -> {
+                        return "必不${w}"
+                    }
+    
+                    15 -> {
+                        return "从来不${w}"
+                    }
+    
+                    16 -> {
+                        return "${w}不${w}又能怎样？"
+                    }
+                    
+                    17 -> {
+                        return "有一说一，确实"
+                    }
+    
+                    18 -> {
+                        return "爱${w}不${w}"
                     }
                 }
             }
