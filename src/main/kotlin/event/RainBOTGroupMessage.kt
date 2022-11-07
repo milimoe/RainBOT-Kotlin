@@ -671,7 +671,7 @@ fun String.getSayNo(): String {
                 }
             }
             if (w == this[whereno - 1]) {
-                type = (0..6).random()
+                type = (0..10).random()
                 when (type) {
                     0 -> {
                         return "不${w}"
@@ -700,6 +700,22 @@ fun String.getSayNo(): String {
                     
                     6 -> {
                         return "是这样的"
+                    }
+    
+                    7 -> {
+                        return "${w}不${w}就别来问群友了吧，成年人了可以自己拿主意"
+                    }
+    
+                    8 -> {
+                        return "得了吧，没人在乎你${w}不${w}的"
+                    }
+    
+                    9 -> {
+                        return "不是，你说的这个跟我没关系啊"
+                    }
+    
+                    10 -> {
+                        return "从来不${w}"
                     }
                 }
             } else if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
@@ -740,7 +756,7 @@ fun String.getSayNo(): String {
                         }
                     }
                 } else {
-                    type = (0..22).random()
+                    type = (0..25).random()
                     when (type) {
                         0 -> {
                             return "确实"
@@ -833,6 +849,18 @@ fun String.getSayNo(): String {
                         22 -> {
                             return "不${w}"
                         }
+    
+                        23 -> {
+                            return "你为什么不想${w}？你才20岁啊"
+                        }
+    
+                        24 -> {
+                            return "笑了，真该${w}吧"
+                        }
+    
+                        25 -> {
+                            return "好${w}"
+                        }
                     }
                 }
         } else {
@@ -877,7 +905,7 @@ fun String.getSayNo(): String {
                     }
                 }
             } else {
-                type = (0..18).random()
+                type = (0..21).random()
                 when (type) {
                     0 -> {
                         return "可是我${w}"
@@ -954,6 +982,18 @@ fun String.getSayNo(): String {
                     18 -> {
                         return "爱${w}不${w}"
                     }
+    
+                    19 -> {
+                        return "你凭啥不${w}啊？"
+                    }
+    
+                    20 -> {
+                        return "笑了，真该${w}吧"
+                    }
+    
+                    21 -> {
+                        return "好${w}"
+                    }
                 }
             }
         }
@@ -961,10 +1001,10 @@ fun String.getSayNo(): String {
         var type: Int = 0
         val w = this[wheremei + 1]
         logger.info { "触发了随机反驳没 -> $w" }
-        type = (0..6).random()
+        type = (0..7).random()
         when (type) {
             0 -> {
-                return "可是我${w}"
+                return "可是我有${w}"
             }
             
             1 -> {
@@ -989,6 +1029,10 @@ fun String.getSayNo(): String {
             
             6 -> {
                 return "没${w}也就这样了"
+            }
+            
+            7 -> {
+                return "从来没有"
             }
             
         }
