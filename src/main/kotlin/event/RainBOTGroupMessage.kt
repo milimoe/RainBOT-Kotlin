@@ -711,7 +711,7 @@ fun String.getSayNo(): String {
                     }
     
                     9 -> {
-                        return "不是，你说的这个跟我没关系啊"
+                        return "你说的这个跟我没关系啊，别问我了"
                     }
     
                     10 -> {
@@ -756,7 +756,7 @@ fun String.getSayNo(): String {
                         }
                     }
                 } else {
-                    type = (0..25).random()
+                    type = (0..30).random()
                     when (type) {
                         0 -> {
                             return "确实"
@@ -811,7 +811,7 @@ fun String.getSayNo(): String {
                         }
     
                         13 -> {
-                            return "不是很懂，你说下你为什么想${w}吧。"
+                            return "不是很懂，你说下你为什么不想${w}吧"
                         }
     
                         14 -> {
@@ -861,6 +861,27 @@ fun String.getSayNo(): String {
                         25 -> {
                             return "好${w}"
                         }
+    
+                        26 -> {
+                            return "我就这么跟你说吧，骗哥们可以，别把你自己也骗到了。" +
+                                    "哥们被你骗了无所谓的，打个哈哈就过了，但希望你打完这段话后擦一下眼角，别让眼泪掉到手机屏幕上了。"
+                        }
+    
+                        27 -> {
+                            return "只能说懂得都懂了兄弟们"
+                        }
+    
+                        28 -> {
+                            return "笑了，真没人${w}吧"
+                        }
+    
+                        29 -> {
+                            return "你今天不${w}我看不起你啊"
+                        }
+    
+                        30 -> {
+                            return "你凭啥不${w}啊？"
+                        }
                     }
                 }
         } else {
@@ -905,7 +926,7 @@ fun String.getSayNo(): String {
                     }
                 }
             } else {
-                type = (0..21).random()
+                type = (0..25).random()
                 when (type) {
                     0 -> {
                         return "可是我${w}"
@@ -948,7 +969,7 @@ fun String.getSayNo(): String {
                     }
     
                     10 -> {
-                        return "不是很懂，你说下你为什么想${w}吧。"
+                        return "不是很懂，你说下你为什么不想${w}吧"
                     }
     
                     11 -> {
@@ -994,14 +1015,32 @@ fun String.getSayNo(): String {
                     21 -> {
                         return "好${w}"
                     }
+    
+                    22 -> {
+                        return "我就这么跟你说吧，骗哥们可以，别把你自己也骗到了。" +
+                                "哥们被你骗了无所谓的，打个哈哈就过了，但希望你打完这段话后擦一下眼角，别让眼泪掉到手机屏幕上了。"
+                    }
+    
+                    23 -> {
+                        return "只能说懂得都懂了兄弟们"
+                    }
+    
+                    24 -> {
+                        return "笑了，真没人${w}吧"
+                    }
+    
+                    25 -> {
+                        return "你今天不${w}我看不起你啊"
+                    }
                 }
             }
         }
     } else if (wheremei >= 0 && wheremei != this.length - 1) {
         var type: Int = 0
         val w = this[wheremei + 1]
+        if (w == '有') return "从来没有"
         logger.info { "触发了随机反驳没 -> $w" }
-        type = (0..7).random()
+        type = (0..8).random()
         when (type) {
             0 -> {
                 return "可是我有${w}"
@@ -1035,15 +1074,19 @@ fun String.getSayNo(): String {
                 return "从来没有"
             }
             
+            8 -> {
+                return "这还没${w}，你想等到你80岁了才有${w}吗？"
+            }
+            
         }
     } else if (whereshi >= 0 && whereshi != this.length - 1) {
         val newmsg = this.substring(whereshi, this.length)
-        if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
+        if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 || newmsg.indexOf("呀") != -1 ||
             newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
             newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
             var type: Int = 0
             logger.info { "触发了随机反驳是" }
-            type = (0..8).random()
+            type = (0..10).random()
             when (type) {
                 0 -> {
                     return "是的"
@@ -1079,6 +1122,18 @@ fun String.getSayNo(): String {
         
                 8 -> {
                     return "你说是就是"
+                }
+        
+                8 -> {
+                    return "从来不是"
+                }
+        
+                9 -> {
+                    return "必不是"
+                }
+        
+                10 -> {
+                    return "真没人在乎是不是吧"
                 }
         
             }

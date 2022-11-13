@@ -49,6 +49,7 @@ object RainBOTFriendMessage {
                         m = ""
                         for (i in 1 until list.count()) {
                             m = m.plus(list[i])
+                            if (i != list.count() - 1) m = m.plus("\n")
                         }
                         val bot = Bot.instances[0]
                         bot.getGroup(g)?.sendMessage(m)
@@ -64,6 +65,7 @@ object RainBOTFriendMessage {
                 var m = ""
                 for (i in 1 until list.count()) {
                     m = m.plus(list[i])
+                    if (i != list.count() - 1) m = m.plus("\n")
                 }
                 val bot = Bot.instances[0]
                 val groups: ContactList<Group> = bot.groups
