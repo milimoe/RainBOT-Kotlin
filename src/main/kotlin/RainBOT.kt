@@ -38,7 +38,7 @@ object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.1.4",
+        version = "1.1.5",
     ) {
         author("Milimoe")
     }
@@ -72,6 +72,7 @@ object RainBOT : KotlinPlugin(
                         isrefresh = true
                         dailys.clear()
                         logger.info { "每日运势已刷新" }
+                        dailys[RainData.BOTQQ] = dailylist[(1..dailylist.count()).random()]
                     }
                 } else {
                     if (isrefresh) isrefresh = false

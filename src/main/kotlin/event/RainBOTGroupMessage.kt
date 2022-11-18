@@ -88,10 +88,11 @@ object MiraiBOTGroupMessage {
          * 随机反驳不
          */
         if (RainData.IsSayNo == 1L) {
-            if (msg.trim().length in 2..25 && msg[msg.length - 1] == '。' && senderID != RainData.BOTQQ) {
+            if (msg.trim().length in 6..50 && msg[msg.length - 1] == '。' && senderID != RainData.BOTQQ) {
                 val sb = StringBuilder()
                 for (i in 0..msg.length - 2) {
-                    sb.append(msg[msg.length - 2 - i])
+                    val c = msg[msg.length - 2 - i]
+                    if (c != '\n') sb.append(c)
                 }
                 sb.append('。')
                 subject.sendMessage(sb.toString())
@@ -472,6 +473,10 @@ object MiraiBOTGroupMessage {
             if (mid != "") {
                 val m = event.group.getMember(mid.toLong())
                 if (m != null) {
+                    if (mid.toLong() == RainData.BOTQQ && !dailys.containsKey(RainData.BOTQQ))
+                    {
+                        dailys[RainData.BOTQQ] = dailylist[(1..dailylist.count()).random()]
+                    }
                     if (dailys.containsKey(mid.toLong())) {
                         event.subject.sendMessage("${m.nick}（${m.id}）" + "的今日运势是：\n${dailys[m.id]}")
                     } else {
@@ -486,6 +491,7 @@ object MiraiBOTGroupMessage {
             org.milimoe.dailys.clear()
             RainBOT.logger.info { "每日运势已刷新" }
             event.subject.sendMessage("每日运势已刷新")
+            org.milimoe.dailys[RainData.BOTQQ] = dailylist[(1..dailylist.count()).random()]
         }
         if (senderID == RainData.Master && msg.length != 4 && msg.getLeftString(2) == "重置" && msg.getRightString(2) == "运势") {
             var m = messageChain.serializeToMiraiCode()

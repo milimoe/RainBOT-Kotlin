@@ -12,6 +12,7 @@ import net.mamoe.mirai.utils.info
 import org.milimoe.RainBOT
 import org.milimoe.dailys
 import org.milimoe.data.RainData
+import org.milimoe.data.RainSetting
 import org.milimoe.whomute
 
 object RainBOTFriendMessage {
@@ -28,6 +29,7 @@ object RainBOTFriendMessage {
                 dailys.clear()
                 RainBOT.logger.info { "每日运势已刷新" }
                 event.subject.sendMessage("每日运势已刷新")
+                dailys[RainData.BOTQQ] = RainSetting.daily.list[(1..RainSetting.daily.list.count()).random()]
             }
             if (msg == "群发早安") {
                 RainBOT.getNews()
