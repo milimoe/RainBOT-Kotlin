@@ -38,7 +38,7 @@ object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.1.5",
+        version = "1.1.6",
     ) {
         author("Milimoe")
     }

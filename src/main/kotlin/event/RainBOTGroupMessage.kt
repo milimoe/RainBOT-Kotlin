@@ -637,6 +637,7 @@ fun String.getSayNo(): String {
     if (whereno >= 0 && whereno != this.length - 1) {
         var type: Int = 0
         var w = this[whereno + 1]
+        if (w == '支') return ""
         logger.info { "触发了随机反驳不 -> $w" }
         if (whereno > 0) {
             val newmsg = this.substring(whereno, this.length)
@@ -762,7 +763,7 @@ fun String.getSayNo(): String {
                         }
                     }
                 } else {
-                    type = (0..30).random()
+                    type = (0..34).random()
                     when (type) {
                         0 -> {
                             return "确实"
@@ -888,6 +889,22 @@ fun String.getSayNo(): String {
                         30 -> {
                             return "你凭啥不${w}啊？"
                         }
+                        
+                        31 -> {
+                            return "真没人在乎你${w}不${w}吧"
+                        }
+                        
+                        32 -> {
+                            return "差不多得了，这不${w}等到啥时候${w}？？"
+                        }
+                        
+                        33 -> {
+                            return "我就不${w}，怎么了？"
+                        }
+                        
+                        34 -> {
+                            return "不${w}的人就像不玩原神，不用我多说了吧"
+                        }
                     }
                 }
         } else {
@@ -932,7 +949,7 @@ fun String.getSayNo(): String {
                     }
                 }
             } else {
-                type = (0..25).random()
+                type = (0..29).random()
                 when (type) {
                     0 -> {
                         return "可是我${w}"
@@ -1038,6 +1055,22 @@ fun String.getSayNo(): String {
                     25 -> {
                         return "你今天不${w}我看不起你啊"
                     }
+    
+                    26 -> {
+                        return "真没人在乎你${w}不${w}吧"
+                    }
+    
+                    27 -> {
+                        return "差不多得了，这不${w}等到啥时候${w}？？"
+                    }
+    
+                    28 -> {
+                        return "我就不${w}，怎么了？"
+                    }
+    
+                    29 -> {
+                        return "不${w}的人就像不玩原神，不用我多说了吧"
+                    }
                 }
             }
         }
@@ -1092,7 +1125,7 @@ fun String.getSayNo(): String {
             newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
             var type: Int = 0
             logger.info { "触发了随机反驳是" }
-            type = (0..10).random()
+            type = (0..11).random()
             when (type) {
                 0 -> {
                     return "是的"
@@ -1130,15 +1163,15 @@ fun String.getSayNo(): String {
                     return "你说是就是"
                 }
         
-                8 -> {
+                9 -> {
                     return "从来不是"
                 }
         
-                9 -> {
+                10 -> {
                     return "必不是"
                 }
         
-                10 -> {
+                11 -> {
                     return "真没人在乎是不是吧"
                 }
         
