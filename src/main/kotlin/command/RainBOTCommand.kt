@@ -1,12 +1,13 @@
 package org.milimoe.command
 
-import net.mamoe.mirai.console.command.CommandSender
-import net.mamoe.mirai.console.command.CompositeCommand
-import net.mamoe.mirai.console.command.ConsoleCommandSender
-import net.mamoe.mirai.console.command.SimpleCommand
+import net.mamoe.mirai.Bot
+import net.mamoe.mirai.console.command.*
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.util.scopeWith
 import net.mamoe.mirai.contact.Member
+import net.mamoe.mirai.contact.getMember
+import net.mamoe.mirai.contact.isAdministrator
+import net.mamoe.mirai.contact.isOwner
 import net.mamoe.mirai.message.data.Image
 import org.milimoe.RainBOT
 import org.milimoe.data.RainData
@@ -106,6 +107,46 @@ object RainSimpleCommand : SimpleCommand(
         }
     }
 
+    @Handler
+    suspend fun CommandSender.handle(option: String, id: Long, todo: String) {
+        if (this.hasPermission(RainBOT.PERMISSION_MILIMOE)) {
+            var isSuccess = false
+            if (option == "title") {
+                val bot = Bot.instances[0]
+                val g = getGroupOrNull()
+                if (g != null) {
+                    if (g.getMember(bot.id) != null && g.getMember(bot.id)!!.isOwner()) {
+                        val m = g.getMember(id)
+                        if (m != null) {
+                            if (todo.trim().length in 1..6) {
+                                m.specialTitle = todo
+                                isSuccess = true
+                            }
+                        }
+                    } else {
+                        sendMessage("设置头衔失败，BOT不是群主，请群主退位再试。")
+                        isSuccess = true
+                    }
+                }
+                if (!isSuccess) sendMessage("设置头衔失败，可能是群不存在或者是群查无此人。")
+            } else if (option == "send") {
+                val bot = Bot.instances[0]
+                val g = bot.getGroup(id)
+                if (g != null) {
+                    if (g.getMember(bot.id) != null) {
+                        if (todo != "" && todo.isNotEmpty()) {
+                            g.sendMessage(todo)
+                            isSuccess = true
+                        }
+                    }
+                }
+                if (!isSuccess) sendMessage("发送至群${id}失败。")
+            } else {
+                sendMessage("找不到匹配的指令。")
+            }
+        }
+    }
+    
     // 复合指令
     object MiliCompositeCommand : CompositeCommand(
         RainBOT, "manage",
