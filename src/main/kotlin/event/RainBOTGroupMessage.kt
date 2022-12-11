@@ -1282,3 +1282,11 @@ fun getImg(coroutineContext: CoroutineContext, event: GroupMessageEvent, url: UR
         }
     }
 }
+
+fun getRepeats() : String {
+    var msg = ""
+    for ((k,v) in repeats) {
+        msg += "ID: ${k}, 内容: ${v.content}\n"
+    }
+    return msg
+}

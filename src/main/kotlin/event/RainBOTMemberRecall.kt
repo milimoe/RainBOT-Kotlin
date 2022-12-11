@@ -13,7 +13,7 @@ import org.milimoe.repeats
 import org.milimoe.whomute
 
 object RainBOTMemberRecall {
-    suspend fun load(event: MessageRecallEvent) {
+    suspend fun load(event: MessageRecallEvent.GroupRecall) {
         if (Bot.instances[0].id != RainData.BOTQQ) return
         if (repeats.contains(event.messageIds)) {
             repeats.remove(event.messageIds)

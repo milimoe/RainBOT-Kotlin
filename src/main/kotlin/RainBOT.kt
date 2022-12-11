@@ -113,7 +113,7 @@ object RainBOT : KotlinPlugin(
         GlobalEventChannel.parentScope(this).subscribeAlways<GroupTempMessageEvent> {
             RainBOTGroupTempMessage.load(this)
         }
-        GlobalEventChannel.parentScope(this).subscribeAlways<MessageRecallEvent> {
+        GlobalEventChannel.parentScope(this).subscribeAlways<MessageRecallEvent.GroupRecall> {
             RainBOTMemberRecall.load(this)
         }
     }
