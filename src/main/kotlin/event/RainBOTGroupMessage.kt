@@ -17,6 +17,7 @@ import org.milimoe.RainBOT
 import org.milimoe.RainBOT.logger
 import org.milimoe.data.RainData
 import org.milimoe.data.OSMCore
+import org.milimoe.repeats
 import org.milimoe.whomute
 import java.io.File
 import java.lang.Character.UnicodeBlock
@@ -66,11 +67,15 @@ object MiraiBOTGroupMessage {
                     }
                 }
                 if (!isIgnore) {
+                    repeats[messageChain.ids] = messageChain
                     logger.info { "触发了复读 -> " + (wait / 1000).toInt() + "秒后复读：$msg" }
                     Timer().schedule(object : TimerTask() {
                         override fun run() {
                             CoroutineScope(RainBOT.coroutineContext).launch {
-                                subject.sendMessage(messageChain)
+                                if (repeats.contains(messageChain.ids)) {
+                                    repeats.remove(messageChain.ids)
+                                    subject.sendMessage(messageChain)
+                                }
                             }
                         }
                     }, wait)
@@ -346,8 +351,14 @@ object MiraiBOTGroupMessage {
          */
         if (RainData.IsOSM == 1L) {
             if ((1..100).random() <= RainData.POSM) {
-                val img = File(RainData.GeneralPath).resolve("osm.png").uploadAsImage(subject)
-                subject.sendMessage(img)
+                if ((1..2).random() == 1) {
+                    val img = File(RainData.GeneralPath).resolve("newosm.jpg").uploadAsImage(subject)
+                    subject.sendMessage(img)
+                } else {
+                    val img = File(RainData.GeneralPath).resolve("osm.png").uploadAsImage(subject)
+                    subject.sendMessage(img)
+                }
+                // 触发OSM时，跳过下面的所有指令。
                 return
             }
             // 随机答复 是呀
@@ -385,8 +396,13 @@ object MiraiBOTGroupMessage {
             val img = File(RainData.LongtuPath).resolve("long ($count).jpg").uploadAsImage(subject)
             subject.sendMessage(img)
         } else if (msg.indexOf("是吗") != -1) {
-            val img = File(RainData.GeneralPath).resolve("osm.png").uploadAsImage(subject)
-            subject.sendMessage(img)
+            if ((1..2).random() == 1) {
+                val img = File(RainData.GeneralPath).resolve("newosm.jpg").uploadAsImage(subject)
+                subject.sendMessage(img)
+            } else {
+                val img = File(RainData.GeneralPath).resolve("osm.png").uploadAsImage(subject)
+                subject.sendMessage(img)
+            }
         } else if (msg.indexOf("谔谔") != -1) {
             val img = File(RainData.GeneralPath).resolve("ee.png").uploadAsImage(subject)
             subject.sendMessage(img)
@@ -487,11 +503,9 @@ object MiraiBOTGroupMessage {
                 }
             }
         }
-        if (msg == "重置运势" && senderID == RainData.Master) {
-            org.milimoe.dailys.clear()
-            RainBOT.logger.info { "每日运势已刷新" }
-            event.subject.sendMessage("每日运势已刷新")
-            org.milimoe.dailys[RainData.BOTQQ] = dailylist[(1..dailylist.count()).random()]
+        if (msg == "重置运势") {
+            dailys.remove(senderID)
+            event.subject.sendMessage("你的每日运势已刷新")
         }
         if (senderID == RainData.Master && msg.length != 4 && msg.getLeftString(2) == "重置" && msg.getRightString(2) == "运势") {
             var m = messageChain.serializeToMiraiCode()

@@ -17,10 +17,14 @@ import org.milimoe.whomute
 
 object RainBOTFriendMessage {
     suspend fun load(event: FriendMessageEvent) {
-        if (RainData.IsRun != 1L) return
         if (Bot.instances[0].id != RainData.BOTQQ) return
         val messageChain: MessageChain = event.message
         val msg: String = messageChain.contentToString()
+        if (msg == "唤醒" && event.sender.id == RainData.Master) {
+            RainData.IsRun = 0
+            RainBOT.logger.info { "BOT被主人唤醒" }
+        }
+        if (RainData.IsRun != 1L) return
         if (event.sender.id == RainData.Master) {
             if (msg == "是") {
                 event.subject.sendMessage("是你的头")
@@ -30,6 +34,10 @@ object RainBOTFriendMessage {
                 RainBOT.logger.info { "每日运势已刷新" }
                 event.subject.sendMessage("每日运势已刷新")
                 dailys[RainData.BOTQQ] = RainSetting.daily.list[(1..RainSetting.daily.list.count()).random()]
+            }
+            if (msg == "休眠") {
+                RainData.IsRun = 1L
+                RainBOT.logger.info { "BOT被主人命令休眠" }
             }
             if (msg == "群发早安") {
                 RainBOT.getNews()

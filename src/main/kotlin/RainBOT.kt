@@ -17,6 +17,7 @@ import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.GroupTempMessageEvent
 import net.mamoe.mirai.event.events.MemberMuteEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
+import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.at
 import net.mamoe.mirai.message.data.messageChainOf
@@ -32,13 +33,14 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 val dailys: HashMap<Long, String> = HashMap<Long, String>()
+val repeats: HashMap<IntArray, MessageChain> = HashMap<IntArray, MessageChain>()
 val whomute: HashMap<Long, Long> = HashMap<Long, Long>()
 
 object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.1.7",
+        version = "1.1.8",
     ) {
         author("Milimoe")
     }
