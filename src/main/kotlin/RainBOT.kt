@@ -12,10 +12,7 @@ import net.mamoe.mirai.contact.ContactList
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.getMember
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.FriendMessageEvent
-import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.event.events.GroupTempMessageEvent
-import net.mamoe.mirai.event.events.MemberMuteEvent
+import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
@@ -115,6 +112,9 @@ object RainBOT : KotlinPlugin(
         }
         GlobalEventChannel.parentScope(this).subscribeAlways<GroupTempMessageEvent> {
             RainBOTGroupTempMessage.load(this)
+        }
+        GlobalEventChannel.parentScope(this).subscribeAlways<MessageRecallEvent> {
+            RainBOTMemberRecall.load(this)
         }
     }
 
