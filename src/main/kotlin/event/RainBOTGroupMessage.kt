@@ -7,8 +7,8 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.ContactList
 import net.mamoe.mirai.contact.NormalMember
 import net.mamoe.mirai.contact.getMember
+import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.event.events.operatorOrBot
 import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.MessageSource.Key.recall
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
@@ -427,6 +427,14 @@ object MiraiBOTGroupMessage {
             val m = messageChain[QuoteReply]
             if (m != null) {
                 m.recallSource()
+                messageChain.recall()
+            }
+        }
+        // 精华
+        if ((msg.indexOf("/精华") != -1 || msg.indexOf("精华；") != -1) && (senderID == RainData.Master)) {
+            val m = messageChain[QuoteReply]
+            if (m != null) {
+                event.group.setEssenceMessage(m.source)
                 messageChain.recall()
             }
         }
