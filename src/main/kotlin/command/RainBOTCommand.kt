@@ -2,6 +2,7 @@ package org.milimoe.command
 
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.command.*
+import net.mamoe.mirai.console.command.BuiltInCommands.AutoLoginCommand.add
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.util.scopeWith
 import net.mamoe.mirai.contact.Member
@@ -11,6 +12,7 @@ import net.mamoe.mirai.contact.isOwner
 import net.mamoe.mirai.message.data.Image
 import org.milimoe.RainBOT
 import org.milimoe.data.RainData
+import org.milimoe.data.RainData.IsOpenOSMGroup
 
 // 简单指令
 object RainSimpleCommand : SimpleCommand(
@@ -101,6 +103,15 @@ object RainSimpleCommand : SimpleCommand(
                         isSuccess = true
                         RainData.POSM = param.toLong()
                     }
+
+                "osmcore" ->
+                    if (param.matches("-?\\d+(\\.\\d+)?".toRegex()) && param.toLong() in 0..100) {
+                        val g = getGroupOrNull()
+                        if (g != null) {
+                            isSuccess = true
+                            IsOpenOSMGroup.add(g.id)
+                        }
+                    }
             }
             if (!isSuccess) sendMessage("赋给${option}的参数无效：$param")
             else sendMessage("已设定${option}的值为：$param")
@@ -111,38 +122,64 @@ object RainSimpleCommand : SimpleCommand(
     suspend fun CommandSender.handle(option: String, id: Long, todo: String) {
         if (this.hasPermission(RainBOT.PERMISSION_MILIMOE)) {
             var isSuccess = false
-            if (option == "title") {
-                val bot = Bot.instances[0]
-                val g = getGroupOrNull()
-                if (g != null) {
-                    if (g.getMember(bot.id) != null && g.getMember(bot.id)!!.isOwner()) {
-                        val m = g.getMember(id)
-                        if (m != null) {
-                            if (todo.trim().length in 1..6) {
-                                m.specialTitle = todo
-                                isSuccess = true
+            when (option) {
+                "title" -> {
+                    val bot = Bot.instances[0]
+                    val g = getGroupOrNull()
+                    if (g != null) {
+                        if (g.getMember(bot.id) != null && g.getMember(bot.id)!!.isOwner()) {
+                            val m = g.getMember(id)
+                            if (m != null) {
+                                if (todo.trim().length in 1..6) {
+                                    m.specialTitle = todo
+                                    isSuccess = true
+                                }
                             }
-                        }
-                    } else {
-                        sendMessage("设置头衔失败，BOT不是群主，请群主退位再试。")
-                        isSuccess = true
-                    }
-                }
-                if (!isSuccess) sendMessage("设置头衔失败，可能是群不存在或者是群查无此人。")
-            } else if (option == "send") {
-                val bot = Bot.instances[0]
-                val g = bot.getGroup(id)
-                if (g != null) {
-                    if (g.getMember(bot.id) != null) {
-                        if (todo != "" && todo.isNotEmpty()) {
-                            g.sendMessage(todo)
+                        } else {
+                            sendMessage("设置头衔失败，BOT不是群主，请群主退位再试。")
                             isSuccess = true
                         }
                     }
+                    if (!isSuccess) sendMessage("设置头衔失败，可能是群不存在或者是群查无此人。")
                 }
-                if (!isSuccess) sendMessage("发送至群${id}失败。")
-            } else {
-                sendMessage("找不到匹配的指令。")
+                
+                "send" -> {
+                    val bot = Bot.instances[0]
+                    val g = bot.getGroup(id)
+                    if (g != null) {
+                        if (g.getMember(bot.id) != null) {
+                            if (todo != "" && todo.isNotEmpty()) {
+                                g.sendMessage(todo)
+                                isSuccess = true
+                            }
+                        }
+                    }
+                    if (!isSuccess) sendMessage("发送至群${id}失败。")
+                }
+                
+                "osm" -> {
+                    val bot = Bot.instances[0]
+                    val g = bot.getGroup(id)
+                    if (g != null) {
+                        if (g.getMember(bot.id) != null) {
+                            isSuccess = true
+                            when (todo) {
+                                "1" -> {
+                                    IsOpenOSMGroup.add(id)
+                                    sendMessage("群${id}开启了OSM核心。")
+                                }
+                                "0" -> {
+                                    IsOpenOSMGroup.remove(id)
+                                    sendMessage("群${id}关闭了OSM核心。")
+                                }
+                                else -> sendMessage("群${id}设置OSM核心状态失败，无效参数${todo}。")
+                            }
+                        }
+                    }
+                    if (!isSuccess) sendMessage("群${id}设置OSM核心状态失败。")
+                }
+                
+                else -> sendMessage("找不到匹配的指令。")
             }
         }
     }

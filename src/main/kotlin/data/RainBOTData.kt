@@ -8,6 +8,7 @@ import net.mamoe.mirai.console.data.PluginDataExtensions.withEmptyDefault
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import org.milimoe.data.RainData.provideDelegate
 
 // 定义插件数据
 // 插件
@@ -61,6 +62,7 @@ object RainData : AutoSavePluginData("Milimoe") { // "name" 是保存的文件�
     val MuteAccessGroup: List<Long> by value()
     val UnmuteAccessGroup: List<Long> by value()
     val RecallAccessGroup: List<Long> by value()
+    val IsOpenOSMGroup: HashSet<Long> = hashSetOf() // 开启OSM核心的群，单独控制
     
     // 带默认值的非空 map.
     // notnullMap[1] 的返回值总是非 null 的 MutableMap<Int, String>
@@ -84,8 +86,8 @@ object RainSetting : ReadOnlyPluginConfig("Milimoe") { // "MySetting" 是保存�
 
 object OSMCore {
     const val version = "v1.2"
-    const val version2 = ""
-    const val time = "Apr. 9th, 2023"
+    const val version2 = "patch1"
+    const val time = "Apr. 28th, 2023"
 }
 
 @Serializable

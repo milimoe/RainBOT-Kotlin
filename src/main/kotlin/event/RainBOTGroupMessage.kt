@@ -17,6 +17,7 @@ import org.milimoe.RainBOT
 import org.milimoe.RainBOT.logger
 import org.milimoe.data.RainData
 import org.milimoe.data.OSMCore
+import org.milimoe.data.RainData.IsOpenOSMGroup
 import org.milimoe.repeats
 import org.milimoe.whomute
 import java.io.File
@@ -45,7 +46,7 @@ object MiraiBOTGroupMessage {
         val sender = event.sender
         val senderID = sender.id
         val subject = event.subject
-        if (msg == "是") {
+        if (msg == "是"  && IsOpenOSMGroup.contains(event.group.id)) {
             if (senderID == RainData.Master) {
                 logger.info { "是你的头" }
                 subject.sendMessage("是你的头")
@@ -55,7 +56,7 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 随机复读
          */
-        if (RainData.IsRepeat == 1L)  {
+        if (RainData.IsRepeat == 1L  && IsOpenOSMGroup.contains(event.group.id))  {
             if ((1..100).random() <= RainData.PRepeat) {
                 sender.nudge().sendTo(event.group)
                 val wait = (RainData.RepeatDelay[0]..RainData.RepeatDelay[1]).random()
@@ -84,7 +85,7 @@ object MiraiBOTGroupMessage {
         }
         if (msg.trim().getLeftString(4).lowercase() == "loli" && msg.trim().getRightString(3).lowercase() == "r18") {
             whomute[senderID] = RainData.Master
-            sender.mute(9999)
+            sender.mute(999)
             subject.sendMessage("禁止通行！")
             messageChain.recall()
         }
@@ -92,7 +93,7 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 随机反驳不
          */
-        if (RainData.IsSayNo == 1L) {
+        if (RainData.IsSayNo == 1L  && IsOpenOSMGroup.contains(event.group.id)) {
             if (msg.trim().length in 6..50 && msg[msg.length - 1] == '。' && senderID != RainData.BOTQQ) {
                 val sb = StringBuilder()
                 for (i in 0..msg.length - 2) {
@@ -349,7 +350,7 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 随机OSM
          */
-        if (RainData.IsOSM == 1L) {
+        if (RainData.IsOSM == 1L && IsOpenOSMGroup.contains(event.group.id)) {
             if ((1..100).random() <= RainData.POSM) {
                 if ((1..2).random() == 1) {
                     val img = File(RainData.GeneralPath).resolve("newosm.jpg").uploadAsImage(subject)
@@ -549,13 +550,20 @@ object MiraiBOTGroupMessage {
          * OSM核心
          */
         if (msg == ".osm -info") {
-            subject.sendMessage(
-                "OSM插件运行状态：\n随机复读：" + RainData.IsRepeat.isOn() + "\n随机OSM：" + RainData.IsOSM.isOn() +
-                        "\n随机反驳不：" + RainData.IsSayNo.isOn() + "\n禁言抽奖：" + RainData.IsMute.isOn() +
-                        "\n随机复读概率：${RainData.PRepeat}%\n随机OSM概率：${RainData.POSM}%" +
-                        "\n随机反驳不概率：${RainData.PSayNo}%\n禁言抽奖时长区间：${RainData.MuteTime[0]}至${RainData.MuteTime[1]}秒" +
-                        "\n随机复读延迟区间：${RainData.RepeatDelay[0] / 1000}至${RainData.RepeatDelay[1] / 1000}秒"
-            )
+            if (IsOpenOSMGroup.contains(event.group.id))
+            {
+                subject.sendMessage(
+                    "OSM插件运行状态：" +
+                            "\n本群已启用OSM核心" +
+                            "\n随机复读：" + RainData.IsRepeat.isOn() + "\n随机OSM：" + RainData.IsOSM.isOn() +
+                            "\n随机反驳不：" + RainData.IsSayNo.isOn() + "\n禁言抽奖：" + RainData.IsMute.isOn() +
+                            "\n随机复读概率：${RainData.PRepeat}%\n随机OSM概率：${RainData.POSM}%" +
+                            "\n随机反驳不概率：${RainData.PSayNo}%\n禁言抽奖时长区间：${RainData.MuteTime[0]}至${RainData.MuteTime[1]}秒" +
+                            "\n随机复读延迟区间：${RainData.RepeatDelay[0] / 1000}至${RainData.RepeatDelay[1] / 1000}秒"
+                )
+            } else {
+                subject.sendMessage("OSM插件运行状态：\n本群未启用OSM核心，请联系我的主人开启。")
+            }
         } else if (msg == ".osm -muteaccess") {
             var m = "禁言权限组成员：\n"
             var count = 0
@@ -657,7 +665,7 @@ fun String.getSayNo(): String {
     val whereshi = this.indexOf("是")
     val wherebie = this.indexOf("别")
     if (whereno >= 0 && whereno != this.length - 1) {
-        var type: Int = 0
+        var type: Int
         var w = this[whereno + 1]
         if (w == '支') return ""
         logger.info { "触发了随机反驳不 -> $w" }
@@ -700,7 +708,7 @@ fun String.getSayNo(): String {
                 }
             }
             if (w == this[whereno - 1]) {
-                type = (0..10).random()
+                type = (0..16).random()
                 when (type) {
                     0 -> {
                         return "不${w}"
@@ -746,11 +754,35 @@ fun String.getSayNo(): String {
                     10 -> {
                         return "从来不${w}"
                     }
+    
+                    11 -> {
+                        return "从来都${w}"
+                    }
+    
+                    12 -> {
+                        return "为什么不${w}啊？"
+                    }
+    
+                    13 -> {
+                        return "太${w}了"
+                    }
+    
+                    14 -> {
+                        return "爱${w}不${w}"
+                    }
+    
+                    15 -> {
+                        return "你说得对，但是美国著名五星上将麦克阿瑟这样评价：每一届都有接近10%的同学因为不玩《崩坏：星穹铁道》而度过相对失败的人生，这不是危言耸听，长期不玩星穹铁道的群友可能就会是这1/10，希望大家提高重视，不要浪费大好年华。大家都说很忙，很卷。但我认为多玩星穹铁道，就可以节省出很多时间开展其他感兴趣的事情，所以请大家提高手机利用率。"
+                    }
+    
+                    16 -> {
+                        return "你${w}不${w}影响我玩《原神》吗？"
+                    }
                 }
             } else if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 ||
                 newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
                 newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
-                    type = (0..7).random()
+                    type = (0..13).random()
                     when (type) {
                         0 -> {
                             return "不${w}"
@@ -782,6 +814,30 @@ fun String.getSayNo(): String {
                         
                         7 -> {
                             return "爱${w}不${w}"
+                        }
+    
+                        8 -> {
+                            return "从来都${w}"
+                        }
+    
+                        9 -> {
+                            return "为什么不${w}啊？"
+                        }
+    
+                        10 -> {
+                            return "太${w}了"
+                        }
+    
+                        11 -> {
+                            return "不${w}的人就像不玩原神，不用我多说了吧"
+                        }
+    
+                        12 -> {
+                            return "不影响我玩《崩坏：星穹铁道》的话，你就别问了，我只能说懂得都懂，不懂的我也不解释。这样吧，你去APP Store下载一个星穹铁道，我就告诉你"
+                        }
+    
+                        13 -> {
+                            return "感觉……不如原神"
                         }
                     }
                 } else {
@@ -935,7 +991,7 @@ fun String.getSayNo(): String {
                 if (whereno + 2 < this.length)
                 {
                     w = this[whereno + 2]
-                    type = (0..7).random()
+                    type = (0..11).random()
                     when (type) {
                         0 -> {
                             return "你${w}别人不一定${w}啊"
@@ -968,10 +1024,26 @@ fun String.getSayNo(): String {
                         7 -> {
                             return "确实"
                         }
+    
+                        8 -> {
+                            return "从来都${w}"
+                        }
+    
+                        9 -> {
+                            return "为什么不${w}啊？"
+                        }
+    
+                        10 -> {
+                            return "太${w}了"
+                        }
+    
+                        11 -> {
+                            return "爱${w}不${w}"
+                        }
                     }
                 }
             } else {
-                type = (0..29).random()
+                type = (0..31).random()
                 when (type) {
                     0 -> {
                         return "可是我${w}"
@@ -1093,15 +1165,22 @@ fun String.getSayNo(): String {
                     29 -> {
                         return "不${w}的人就像不玩原神，不用我多说了吧"
                     }
+    
+                    30 -> {
+                        return "你爱${w}不${w}，别影响我玩《原神》。"
+                    }
+    
+                    31 -> {
+                        return "你${w}不${w}影响我玩《崩坏：星穹铁道》吗？"
+                    }
                 }
             }
         }
     } else if (wheremei >= 0 && wheremei != this.length - 1) {
-        var type: Int = 0
         val w = this[wheremei + 1]
         if (w == '有') return "从来没有"
         logger.info { "触发了随机反驳没 -> $w" }
-        type = (0..8).random()
+        var type: Int = (0..11).random()
         when (type) {
             0 -> {
                 return "可是我有${w}"
@@ -1139,15 +1218,25 @@ fun String.getSayNo(): String {
                 return "这还没${w}，你想等到你80岁了才有${w}吗？"
             }
             
+            9 -> {
+                return "从来都有"
+            }
+            
+            10 -> {
+                return "爱有没有"
+            }
+    
+            11 -> {
+                return "不影响我玩原神的话有没有都无所谓"
+            }
         }
     } else if (whereshi >= 0 && whereshi != this.length - 1) {
         val newmsg = this.substring(whereshi, this.length)
         if (newmsg.indexOf("吗") != -1 || newmsg.indexOf("呢") != -1 || newmsg.indexOf("呀") != -1 ||
             newmsg.indexOf("啊") != -1 || newmsg.indexOf("么") != -1 ||
             newmsg.indexOf("吧") != -1 || newmsg.indexOf("?") != -1 || newmsg.indexOf("？") != -1) {
-            var type: Int = 0
             logger.info { "触发了随机反驳是" }
-            type = (0..11).random()
+            var type: Int = (0..13).random()
             when (type) {
                 0 -> {
                     return "是的"
@@ -1197,13 +1286,20 @@ fun String.getSayNo(): String {
                     return "真没人在乎是不是吧"
                 }
         
+                12 -> {
+                    return "爱是不是"
+                }
+        
+                13 -> {
+                    return "是不是影响我玩《崩坏：星穹铁道》吗？"
+                }
+        
             }
         }
     } else if (wherebie >= 0 && wherebie != this.length - 1) {
-        var type: Int = 0
         val w = this[wherebie + 1]
         logger.info { "触发了随机反驳别 -> $w" }
-        type = (0..6).random()
+        var type: Int = (0..12).random()
         when (type) {
             0 -> {
                 return "算了吧，最好别${w}"
@@ -1232,7 +1328,30 @@ fun String.getSayNo(): String {
             6 -> {
                 return "我觉得${w}不${w}都那样"
             }
-        
+    
+            7 -> {
+                return "从来都${w}"
+            }
+    
+            8 -> {
+                return "为什么不${w}啊？"
+            }
+    
+            9 -> {
+                return "太${w}了"
+            }
+    
+            10 -> {
+                return "爱${w}不${w}"
+            }
+    
+            11 -> {
+                return "你爱${w}不${w}，别影响我玩《原神》。"
+            }
+    
+            12 -> {
+                return "你爱${w}不${w}，别影响我玩《崩坏：星穹铁道》。"
+            }
         }
     }
     return ""

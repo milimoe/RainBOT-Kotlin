@@ -37,7 +37,7 @@ object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.2.0",
+        version = "1.2.1",
     ) {
         author("Milimoe")
     }
@@ -101,6 +101,12 @@ object RainBOT : KotlinPlugin(
             }
         }.start()
 
+        GlobalEventChannel.parentScope(this).subscribeAlways<BotOnlineEvent> {
+            RainBOTBotOnline.load(this)
+        }
+        GlobalEventChannel.parentScope(this).subscribeAlways<MemberJoinRequestEvent> {
+            RainBOTMemberJoinRequest.load(this)
+        }
         GlobalEventChannel.parentScope(this).subscribeAlways<GroupMessageEvent> {
             MiraiBOTGroupMessage.load(RainBOT.coroutineContext, this, dailys, dailylist)
         }
