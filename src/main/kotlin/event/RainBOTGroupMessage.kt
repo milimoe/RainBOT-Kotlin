@@ -841,7 +841,7 @@ fun String.getSayNo(): String {
                         }
                     }
                 } else {
-                    type = (0..34).random()
+                    type = (0..35).random()
                     when (type) {
                         0 -> {
                             return "确实"
@@ -983,6 +983,10 @@ fun String.getSayNo(): String {
                         34 -> {
                             return "不${w}的人就像不玩原神，不用我多说了吧"
                         }
+                        
+                        35 -> {
+                            return "别说哥们没提醒你，以后大伙在那边讨论99+星穹铁道，就你在旁边急得插不上话，只能发发自己的图然后被人无视用消息刷过去，最后只能尴尬的天天复读其他人的星穹铁道聊天内容。这一切都是因为5月份你没玩星穹铁道。"
+                        }
                     }
                 }
         } else {
@@ -1043,7 +1047,7 @@ fun String.getSayNo(): String {
                     }
                 }
             } else {
-                type = (0..31).random()
+                type = (0..32).random()
                 when (type) {
                     0 -> {
                         return "可是我${w}"
@@ -1173,53 +1177,56 @@ fun String.getSayNo(): String {
                     31 -> {
                         return "你${w}不${w}影响我玩《崩坏：星穹铁道》吗？"
                     }
+    
+                    32 -> {
+                        return "别说哥们没提醒你，以后大伙在那边讨论99+星穹铁道，就你在旁边急得插不上话，只能发发自己的图然后被人无视用消息刷过去，最后只能尴尬的天天复读其他人的星穹铁道聊天内容。这一切都是因为5月份你没玩星穹铁道。"
+                    }
                 }
             }
         }
     } else if (wheremei >= 0 && wheremei != this.length - 1) {
         val w = this[wheremei + 1]
-        if (w == '有') return "从来没有"
+        var type : Int  = if (w == '有') (2..11).random() else (0..11).random()
         logger.info { "触发了随机反驳没 -> $w" }
-        var type: Int = (0..11).random()
         when (type) {
             0 -> {
                 return "可是我有${w}"
             }
             
             1 -> {
-                return "我也没${w}"
+                return "从来都有${w}"
             }
             
             2 -> {
-                return "你没${w}不代表别人没${w}"
+                return "我也没${w}"
             }
             
             3 -> {
-                return "必没"
+                return "你没${w}不代表别人没${w}"
             }
             
             4 -> {
-                return "我不好说"
+                return "必没"
             }
             
             5 -> {
-                return "不会有人没${w}吧？"
+                return "我不好说"
             }
             
             6 -> {
-                return "没${w}也就这样了"
+                return "不会有人没${w}吧？"
             }
             
             7 -> {
-                return "从来没有"
+                return "没${w}也就这样了"
             }
             
             8 -> {
-                return "这还没${w}，你想等到你80岁了才有${w}吗？"
+                return "从来没有"
             }
             
             9 -> {
-                return "从来都有"
+                return "这还没${w}，你想等到你80岁了才有${w}吗？"
             }
             
             10 -> {
@@ -1227,7 +1234,7 @@ fun String.getSayNo(): String {
             }
     
             11 -> {
-                return "不影响我玩原神的话有没有都无所谓"
+                return "你${w}没${w}都不影响我玩《原神》，懂吗？"
             }
         }
     } else if (whereshi >= 0 && whereshi != this.length - 1) {

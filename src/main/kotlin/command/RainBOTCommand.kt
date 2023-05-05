@@ -2,12 +2,10 @@ package org.milimoe.command
 
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.command.*
-import net.mamoe.mirai.console.command.BuiltInCommands.AutoLoginCommand.add
 import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.util.scopeWith
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.getMember
-import net.mamoe.mirai.contact.isAdministrator
 import net.mamoe.mirai.contact.isOwner
 import net.mamoe.mirai.message.data.Image
 import org.milimoe.RainBOT
