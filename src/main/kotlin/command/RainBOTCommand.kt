@@ -10,7 +10,7 @@ import net.mamoe.mirai.contact.isOwner
 import net.mamoe.mirai.message.data.Image
 import org.milimoe.RainBOT
 import org.milimoe.data.RainData
-import org.milimoe.data.RainData.IsOpenOSMGroup
+import org.milimoe.data.RainSetting.IsOpenOSMGroup
 
 // 简单指令
 object RainSimpleCommand : SimpleCommand(
@@ -107,7 +107,7 @@ object RainSimpleCommand : SimpleCommand(
                         val g = getGroupOrNull()
                         if (g != null) {
                             isSuccess = true
-                            IsOpenOSMGroup.add(g.id)
+                            IsOpenOSMGroup.set.add(g.id)
                         }
                     }
             }
@@ -163,11 +163,11 @@ object RainSimpleCommand : SimpleCommand(
                             isSuccess = true
                             when (todo) {
                                 "1" -> {
-                                    IsOpenOSMGroup.add(id)
+                                    IsOpenOSMGroup.set.add(id)
                                     sendMessage("群${id}开启了OSM核心。")
                                 }
                                 "0" -> {
-                                    IsOpenOSMGroup.remove(id)
+                                    IsOpenOSMGroup.set.remove(id)
                                     sendMessage("群${id}关闭了OSM核心。")
                                 }
                                 else -> sendMessage("群${id}设置OSM核心状态失败，无效参数${todo}。")

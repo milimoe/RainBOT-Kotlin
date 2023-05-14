@@ -17,7 +17,7 @@ import org.milimoe.RainBOT
 import org.milimoe.RainBOT.logger
 import org.milimoe.data.RainData
 import org.milimoe.data.OSMCore
-import org.milimoe.data.RainData.IsOpenOSMGroup
+import org.milimoe.data.RainSetting.IsOpenOSMGroup
 import org.milimoe.repeats
 import org.milimoe.whomute
 import java.io.File
@@ -46,7 +46,7 @@ object MiraiBOTGroupMessage {
         val sender = event.sender
         val senderID = sender.id
         val subject = event.subject
-        if (msg == "是"  && IsOpenOSMGroup.contains(event.group.id)) {
+        if (msg == "是"  && IsOpenOSMGroup.set.contains(event.group.id)) {
             if (senderID == RainData.Master) {
                 logger.info { "是你的头" }
                 subject.sendMessage("是你的头")
@@ -56,7 +56,7 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 随机复读
          */
-        if (RainData.IsRepeat == 1L  && IsOpenOSMGroup.contains(event.group.id))  {
+        if (RainData.IsRepeat == 1L  && IsOpenOSMGroup.set.contains(event.group.id))  {
             if ((1..100).random() <= RainData.PRepeat) {
                 sender.nudge().sendTo(event.group)
                 val wait = (RainData.RepeatDelay[0]..RainData.RepeatDelay[1]).random()
@@ -93,7 +93,7 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 随机反驳不
          */
-        if (RainData.IsSayNo == 1L  && IsOpenOSMGroup.contains(event.group.id)) {
+        if (RainData.IsSayNo == 1L  && IsOpenOSMGroup.set.contains(event.group.id)) {
             if (msg.trim().length in 6..50 && msg[msg.length - 1] == '。' && senderID != RainData.BOTQQ) {
                 val sb = StringBuilder()
                 for (i in 0..msg.length - 2) {
@@ -350,7 +350,7 @@ object MiraiBOTGroupMessage {
          * OSM核心功能
          * 随机OSM
          */
-        if (RainData.IsOSM == 1L && IsOpenOSMGroup.contains(event.group.id)) {
+        if (RainData.IsOSM == 1L && IsOpenOSMGroup.set.contains(event.group.id)) {
             if ((1..100).random() <= RainData.POSM) {
                 if ((1..2).random() == 1) {
                     val img = File(RainData.GeneralPath).resolve("newosm.jpg").uploadAsImage(subject)
@@ -550,7 +550,7 @@ object MiraiBOTGroupMessage {
          * OSM核心
          */
         if (msg == ".osm -info") {
-            if (IsOpenOSMGroup.contains(event.group.id))
+            if (IsOpenOSMGroup.set.contains(event.group.id))
             {
                 subject.sendMessage(
                     "OSM插件运行状态：" +

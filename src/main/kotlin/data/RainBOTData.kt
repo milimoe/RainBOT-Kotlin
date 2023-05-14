@@ -62,7 +62,6 @@ object RainData : AutoSavePluginData("Milimoe") { // "name" 是保存的文件�
     val MuteAccessGroup: List<Long> by value()
     val UnmuteAccessGroup: List<Long> by value()
     val RecallAccessGroup: List<Long> by value()
-    val IsOpenOSMGroup: HashSet<Long> = hashSetOf() // 开启OSM核心的群，单独控制
     
     // 带默认值的非空 map.
     // notnullMap[1] 的返回值总是非 null 的 MutableMap<Int, String>
@@ -82,13 +81,20 @@ object RainSetting : ReadOnlyPluginConfig("Milimoe") { // "MySetting" 是保存�
     val count by value(0)
 
     val daily by value<DailyData>() // 嵌套类型是支持的
+    
+    val IsOpenOSMGroup by value<OpenOSMGroup>() // 开启OSM核心的群，单独控制
 }
 
 object OSMCore {
     const val version = "v1.2"
-    const val version2 = "patch2"
-    const val time = "May 5th, 2023"
+    const val version2 = "patch3"
+    const val time = "May 14th, 2023"
 }
+
+@Serializable
+data class  OpenOSMGroup(
+    val set: HashSet<Long> = hashSetOf()
+)
 
 @Serializable
 data class DailyData(
