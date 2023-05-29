@@ -347,6 +347,25 @@ object MiraiBOTGroupMessage {
             }
         }
         /**
+         * 确保优先级大于随机OSM，防止被吞指令
+         */
+        // 撤回
+        if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && (senderID == RainData.Master || RainData.RecallAccessGroup.contains(senderID))) {
+            val m = messageChain[QuoteReply]
+            if (m != null) {
+                m.recallSource()
+                messageChain.recall()
+            }
+        }
+        // 精华
+        if ((msg.indexOf("/精华") != -1 || msg.indexOf("精华；") != -1) && (senderID == RainData.Master)) {
+            val m = messageChain[QuoteReply]
+            if (m != null) {
+                event.group.setEssenceMessage(m.source)
+                messageChain.recall()
+            }
+        }
+        /**
          * OSM核心功能
          * 随机OSM
          */
@@ -420,24 +439,11 @@ object MiraiBOTGroupMessage {
             event.subject.sendMessage(
                 "「食用指南」\n\n发送【来图】【白毛】【猫耳】【壁纸】获取随机美图\n" +
                         "发送【新闻】可以获取今天的60秒读懂世界\n发送【我的运势】可以了解今天的运势情况\n" +
-                        "发送【禁言抽奖】可以获取随机时长禁言奖励\n\n-> By https://mili.cyou <-\nSee Also: https://github.com/milimoe"
+                        "发送【禁言抽奖】可以获取随机时长禁言奖励\n" +
+                        "发送【查看 @某人 运势】可以了解此人的今日运势\n" +
+                        "娱乐头像玩法：发送【抱、抓、拍、顶、咬、指、笑、嗨、甩、打】中任意一个 + @某人\n" +
+                        "\n-> By https://mili.cyou <-\nSee Also: https://github.com/milimoe"
             )
-        }
-        // 撤回
-        if ((msg.indexOf("/撤回") != -1 || msg.indexOf("撤回；") != -1) && (senderID == RainData.Master || RainData.RecallAccessGroup.contains(senderID))) {
-            val m = messageChain[QuoteReply]
-            if (m != null) {
-                m.recallSource()
-                messageChain.recall()
-            }
-        }
-        // 精华
-        if ((msg.indexOf("/精华") != -1 || msg.indexOf("精华；") != -1) && (senderID == RainData.Master)) {
-            val m = messageChain[QuoteReply]
-            if (m != null) {
-                event.group.setEssenceMessage(m.source)
-                messageChain.recall()
-            }
         }
         /**
          * OSM核心功能
@@ -543,6 +549,62 @@ object MiraiBOTGroupMessage {
                     }
                 } else {
                     subject.sendMessage("命令格式不正确\n请遵守格式：重置@1@2..@N 运势")
+                }
+            }
+        }
+        /**
+         * 头像娱乐玩法
+         */
+        if (msg.getLeftString(1) == "抱" || msg.getLeftString(1) == "抓" || msg.getLeftString(1) == "拍" ||
+            msg.getLeftString(1) == "顶" || msg.getLeftString(1) == "咬" || msg.getLeftString(1) == "指" ||
+            msg.getLeftString(1) == "笑" || msg.getLeftString(1) == "嗨" || msg.getLeftString(1) == "甩" ||
+            msg.getLeftString(1) == "打") {
+            val s = msg.getLeftString(1)
+            val mid = msg.getNumber()
+            if (mid != "") {
+                val m = event.group.getMember(mid.toLong())
+                if (m != null) {
+                    when (s) {
+                        "抱" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/baororo/?qq=${m.id}"))
+                        }
+                        
+                        "抓" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/grab/?qq=${m.id}"))
+                        }
+                        
+                        "拍" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/paigua/?qq=${m.id}"))
+                        }
+                        
+                        "顶" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/dingqiu/?qq=${m.id}"))
+                        }
+                        
+                        "咬" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/bite/?qq=${m.id}"))
+                        }
+                        
+                        "指" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/Lookatthis/?qq=${m.id}"))
+                        }
+                        
+                        "笑" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/LaughTogether/?qq=${m.id}"))
+                        }
+                        
+                        "嗨" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/FortuneCat/?qq=${m.id}"))
+                        }
+                        
+                        "甩" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/DanceChickenLeg/?qq=${m.id}"))
+                        }
+                        
+                        "打" -> {
+                            getImg(coroutineContext, event, URL("https://api.xingzhige.com/API/pound/?qq=${m.id}"))
+                        }
+                    }
                 }
             }
         }

@@ -35,7 +35,7 @@ object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.2.3",
+        version = "1.2.4",
     ) {
         author("Milimoe")
     }
@@ -266,6 +266,4 @@ object RainBOT : KotlinPlugin(
         RainData.GeneralPath = dataFolder.path
     }
 }
-
-
 
