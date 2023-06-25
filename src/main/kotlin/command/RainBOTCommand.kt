@@ -110,6 +110,12 @@ object RainSimpleCommand : SimpleCommand(
                             IsOpenOSMGroup.set.add(g.id)
                         }
                     }
+
+                "bltimes" ->
+                    if (param.matches("-?\\d+(\\.\\d+)?".toRegex()) && param.toLong() in 0..20) {
+                        isSuccess = true
+                        RainData.BlackListTimes = param.toLong()
+                    }
             }
             if (!isSuccess) sendMessage("赋给${option}的参数无效：$param")
             else sendMessage("已设定${option}的值为：$param")

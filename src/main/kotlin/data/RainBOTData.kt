@@ -19,6 +19,7 @@ object RainData : AutoSavePluginData("Milimoe") { // "name" 是保存的文件�
     var Longtu: Long by value(0L) // 龙图数量
     var RepeatDelay: MutableList<Long> by value(mutableListOf(120000L, 300000L)) // 复读延迟
     var MuteTime: MutableList<Long> by value(mutableListOf(120L, 12600L)) // 禁言时长
+    var BlackListTimes: Long by value(0L) // 设定黑名单门槛次数
     var IsRepeat: Long by value(1L) // 是否开启随机复读
     var IsOSM: Long by value(1L) // 是否开启随机OSM
     var IsSayNo: Long by value(1L) // 是否开启随机反驳不
@@ -87,8 +88,8 @@ object RainSetting : ReadOnlyPluginConfig("Milimoe") { // "MySetting" 是保存�
 
 object OSMCore {
     const val version = "v1.2"
-    const val version2 = "patch4"
-    const val time = "May 29th, 2023"
+    const val version2 = "patch5"
+    const val time = "June 25th, 2023"
 }
 
 @Serializable

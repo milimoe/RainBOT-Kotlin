@@ -30,12 +30,14 @@ import java.time.format.DateTimeFormatter
 val dailys: HashMap<Long, String> = HashMap<Long, String>()
 val repeats: HashMap<IntArray, MessageChain> = HashMap<IntArray, MessageChain>()
 val whomute: HashMap<Long, Long> = HashMap<Long, Long>()
+val blacks: HashSet<Long> = HashSet<Long>()
+val blacklist: HashMap<Long, Long> = HashMap<Long, Long>()
 
 object RainBOT : KotlinPlugin(
     JvmPluginDescription(
         id = "org.milimoe.raincandy",
         name = "RainCandy",
-        version = "1.2.4",
+        version = "1.2.5",
     ) {
         author("Milimoe")
     }
@@ -70,6 +72,8 @@ object RainBOT : KotlinPlugin(
                         dailys.clear()
                         logger.info { "每日运势已刷新" }
                         dailys[RainData.BOTQQ] = dailylist[(1..dailylist.count()).random()]
+                        blacks.clear()
+                        logger.info { "总黑名单已重置" }
                     }
                 } else {
                     if (isrefresh) isrefresh = false
@@ -99,6 +103,13 @@ object RainBOT : KotlinPlugin(
             }
         }.start()
 
+        Thread {
+            while (true) {
+                Thread.sleep(60 * 1000)
+                blacklist.clear()
+            }
+        }.start()
+
         GlobalEventChannel.parentScope(this).subscribeAlways<BotOnlineEvent> {
             RainBOTBotOnline.load(this)
         }
@@ -106,10 +117,10 @@ object RainBOT : KotlinPlugin(
             RainBOTMemberJoinRequest.load(this)
         }
         GlobalEventChannel.parentScope(this).subscribeAlways<GroupMessageEvent> {
-            MiraiBOTGroupMessage.load(RainBOT.coroutineContext, this, dailys, dailylist)
+            if (!blacks.contains(this.sender.id)) MiraiBOTGroupMessage.load(RainBOT.coroutineContext, this, dailys, dailylist, blacks, blacklist)
         }
         GlobalEventChannel.parentScope(this).subscribeAlways<FriendMessageEvent> {
-            RainBOTFriendMessage.load(this)
+            if (!blacks.contains(this.sender.id)) RainBOTFriendMessage.load(this, blacks, blacklist)
         }
         GlobalEventChannel.parentScope(this).subscribeAlways<MemberMuteEvent> {
             RainBOTMemberMute.load(this)

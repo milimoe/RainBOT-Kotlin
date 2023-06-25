@@ -37,7 +37,9 @@ object MiraiBOTGroupMessage {
         coroutineContext: CoroutineContext,
         event: GroupMessageEvent,
         dailys: HashMap<Long, String>,
-        dailylist: List<String>
+        dailylist: List<String>,
+        blacks: HashSet<Long>,
+        blacklist: HashMap<Long, Long>
     ) {
         if (RainData.IsRun != 1L) return
         if (Bot.instances[0].id != RainData.BOTQQ) return
@@ -46,6 +48,19 @@ object MiraiBOTGroupMessage {
         val sender = event.sender
         val senderID = sender.id
         val subject = event.subject
+        /**
+         * 不友好用户检测
+         */
+        if (blacklist.containsKey(senderID)) {
+            blacklist[senderID] = blacklist[senderID]?.plus(1) ?: 1
+            if ((blacklist[senderID] ?: 1) > 10) {
+                blacks.add(senderID)
+                subject.sendMessage("${event.senderName}（${senderID}）已被列入不友好用户名单")
+                return
+            }
+        } else {
+            blacklist[senderID] = 1
+        }
         if (msg == "是"  && IsOpenOSMGroup.set.contains(event.group.id)) {
             if (senderID == RainData.Master) {
                 logger.info { "是你的头" }

@@ -16,8 +16,21 @@ import org.milimoe.data.RainSetting
 import org.milimoe.whomute
 
 object RainBOTFriendMessage {
-    suspend fun load(event: FriendMessageEvent) {
+    suspend fun load(event: FriendMessageEvent, blacks: HashSet<Long>, blacklist: HashMap<Long, Long>) {
         if (Bot.instances[0].id != RainData.BOTQQ) return
+        /**
+         * 不友好用户检测
+         */
+        if (blacklist.containsKey(event.sender.id)) {
+            blacklist[event.sender.id] = blacklist[event.sender.id]?.plus(1) ?: 1
+            if ((blacklist[event.sender.id] ?: 1) > 10) {
+                blacks.add(event.sender.id)
+                event.subject.sendMessage("${event.senderName}（${event.sender.id}）已被列入不友好用户名单")
+                return
+            }
+        } else {
+            blacklist[event.sender.id] = 1
+        }
         val messageChain: MessageChain = event.message
         val msg: String = messageChain.contentToString()
         if (msg == "唤醒" && event.sender.id == RainData.Master) {
